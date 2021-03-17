@@ -36,4 +36,3 @@ $ln -s $GOPATH/bin/packer-plugin-ksyun ~/.packer.d/plugins/packer-plugin-ksyun
 * Download binaries from the [releases page](https://github.com/kingsoftcloud/packer-plugin-ksyun/releases).
 * [Install](https://www.packer.io/docs/extending/plugins.html#installing-plugins) the plugin, or simply put it into the same directory with JSON templates.
 * Move the downloaded binary to `~/.packer.d/plugins/`
-
