@@ -1,4 +1,4 @@
-//go:generate mapstructure-to-hcl2 -type Config,KingcloudDiskDevice,KingcloudEbsDataDisk
+//go:generate mapstructure-to-hcl2 -type Config,KsyunDiskDevice,KsyunEbsDataDisk
 
 // The kingcloud  contains a packersdk.Builder implementation that
 // builds ecs images for kingcloud.
@@ -20,10 +20,10 @@ import (
 const BuilderId = "kingcloud.kec"
 
 type Config struct {
-	common.PackerConfig   `mapstructure:",squash"`
-	KingcloudAccessConfig `mapstructure:",squash"`
-	KingcloudImageConfig  `mapstructure:",squash"`
-	KingcloudRunConfig    `mapstructure:",squash"`
+	common.PackerConfig `mapstructure:",squash"`
+	KsyunAccessConfig   `mapstructure:",squash"`
+	KsyunImageConfig    `mapstructure:",squash"`
+	KsyunRunConfig      `mapstructure:",squash"`
 
 	ctx interpolate.Context
 }
@@ -53,15 +53,15 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 	// Accumulate any errors
 	var errs *packersdk.MultiError
-	errs = packersdk.MultiErrorAppend(errs, b.config.KingcloudAccessConfig.Prepare(&b.config.ctx)...)
-	errs = packersdk.MultiErrorAppend(errs, b.config.KingcloudImageConfig.Prepare(&b.config.ctx)...)
-	errs = packersdk.MultiErrorAppend(errs, b.config.KingcloudRunConfig.Prepare(&b.config.ctx)...)
+	errs = packersdk.MultiErrorAppend(errs, b.config.KsyunAccessConfig.Prepare(&b.config.ctx)...)
+	errs = packersdk.MultiErrorAppend(errs, b.config.KsyunImageConfig.Prepare(&b.config.ctx)...)
+	errs = packersdk.MultiErrorAppend(errs, b.config.KsyunRunConfig.Prepare(&b.config.ctx)...)
 
 	if errs != nil && len(errs.Errors) > 0 {
 		return nil, nil, errs
 	}
 
-	packersdk.LogSecretFilter.Set(b.config.KingcloudAccessKey, b.config.KingcloudSecretKey)
+	packersdk.LogSecretFilter.Set(b.config.KsyunAccessKey, b.config.KsyunSecretKey)
 	return nil, nil, nil
 }
 
@@ -76,47 +76,45 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	//step
 	var steps []multistep.Step
 	steps = []multistep.Step{
-		&stepConfigKingcloudCommon{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
+		&stepConfigKsyunCommon{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
-		&stepCheckKingcloudSourceImage{
+		&stepCheckKsyunSourceImage{
 			SourceImageId: b.config.SourceImageId,
 		},
-		&stepConfigKingcloudKeyPair{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
-			Comm: &b.config.KingcloudRunConfig.Comm,
+		&stepConfigKsyunKeyPair{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
+			Comm:           &b.config.KsyunRunConfig.Comm,
 		},
-		&stepConfigKingcloudVpc{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
+		&stepConfigKsyunVpc{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
-		&stepConfigKingcloudSubnet{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
+		&stepConfigKsyunSubnet{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
-		&stepConfigKingcloudSecurityGroup{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
+		&stepConfigKsyunSecurityGroup{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
-		&stepCreateKingcloudKec{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
+		&stepCreateKsyunKec{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
-		&stepConfigKingcloudPublicIp{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
+		&stepConfigKsyunPublicIp{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
 		&communicator.StepConnect{
-			Config: &b.config.KingcloudRunConfig.Comm,
-			Host: SSHHost(b.config.KingcloudRunConfig.Comm),
-			SSHConfig: b.config.KingcloudRunConfig.Comm.SSHConfigFunc(),
+			Config:    &b.config.KsyunRunConfig.Comm,
+			Host:      SSHHost(b.config.KsyunRunConfig.Comm),
+			SSHConfig: b.config.KsyunRunConfig.Comm.SSHConfigFunc(),
 		},
 		&commonsteps.StepProvision{},
-		&stepStopKingcloudKec{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
+		&stepStopKsyunKec{
+			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
-		&stepCreateKingcloudImage{
-			KingcloudRunConfig: &b.config.KingcloudRunConfig,
-			KingcloudImageConfig: &b.config.KingcloudImageConfig,
+		&stepCreateKsyunImage{
+			KsyunRunConfig:   &b.config.KsyunRunConfig,
+			KsyunImageConfig: &b.config.KsyunImageConfig,
 		},
 	}
-
-
 
 	// Run!
 	b.runner = commonsteps.NewRunner(steps, b.config.PackerConfig, ui)
@@ -124,7 +122,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 
 	// Build the artifact and return it
 	artifact := &Artifact{
-		KingcloudImageId: stateBag.Get("TargetImageId").(string),
+		KsyunImageId:   stateBag.Get("TargetImageId").(string),
 		BuilderIdValue: BuilderId,
 		Client:         b.config.client,
 	}

@@ -15,6 +15,6 @@ build:
 
 install: build
 	mkdir -p ~/.packer.d/plugins
-	install ./packer-plugin-kscloud ~/.packer.d/plugins/
+	install ./packer-plugin-ksyun ~/.packer.d/plugins/
 
 .PHONY: default test test_integration lint build install

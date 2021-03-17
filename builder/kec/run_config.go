@@ -11,8 +11,7 @@ import (
 	"regexp"
 )
 
-
-type KingcloudEbsDataDisk struct {
+type KsyunEbsDataDisk struct {
 	//  SSD3.0|| EHDD
 	EbsDataDiskType string `mapstructure:"data_disk_type" required:"true"`
 	//  [10，16000]
@@ -21,15 +20,15 @@ type KingcloudEbsDataDisk struct {
 	EbsDataDiskSnapshotId string `mapstructure:"data_disk_snapshot_id" required:"false"`
 }
 
-type KingcloudRunConfig struct {
+type KsyunRunConfig struct {
 	//Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
-	InstanceType string `mapstructure:"instance_type" required:"true"`
+	InstanceType  string `mapstructure:"instance_type" required:"true"`
 	SourceImageId string `mapstructure:"source_image_id" required:"true"`
 	// Local_SSD || SSD3.0 || EHDD
 	SystemDiskType string `mapstructure:"system_disk_type" required:"false"`
-	SystemDiskSize int `mapstructure:"system_disk_size" required:"false"`
+	SystemDiskSize int    `mapstructure:"system_disk_size" required:"false"`
 	// EbsDataDisk
-	KingcloudEbsDataDisks []KingcloudEbsDataDisk `mapstructure:"data_disks" required:"false"`
+	KsyunEbsDataDisks []KsyunEbsDataDisk `mapstructure:"data_disks" required:"false"`
 	// PostPaidByDay or PostPaidByHour
 	// default is PostPaidByDay
 	InstanceChargeType string `mapstructure:"instance_charge_type" required:"true"`
@@ -84,8 +83,8 @@ type KingcloudRunConfig struct {
 	// default : false
 	SriovNetSupport bool `mapstructure:"sriov_net_support" required:"false"`
 	// Default is 0
-	ProjectId string `mapstructure:"project_id" required:"false"`
-	AssociatePublicIpAddress bool `mapstructure:"associate_public_ip_address" required:"false"`
+	ProjectId                string `mapstructure:"project_id" required:"false"`
+	AssociatePublicIpAddress bool   `mapstructure:"associate_public_ip_address" required:"false"`
 	// PublicIp charge type, which can be
 	// Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement
 	// Default is Daily
@@ -108,7 +107,7 @@ type KingcloudRunConfig struct {
 	Comm communicator.Config `mapstructure:",squash"`
 }
 
-func (c *KingcloudRunConfig) Prepare(ctx *interpolate.Context) []error {
+func (c *KsyunRunConfig) Prepare(ctx *interpolate.Context) []error {
 	// SSH Validation
 	if c.Comm.SSHKeyPairName == "" && c.Comm.SSHTemporaryKeyPairName == "" &&
 		c.Comm.SSHPrivateKeyFile == "" && c.Comm.SSHPassword == "" && c.Comm.WinRMPassword == "" {
@@ -122,8 +121,8 @@ func (c *KingcloudRunConfig) Prepare(ctx *interpolate.Context) []error {
 		errs = append(errs, errors.New("A source_image_id must be specified"))
 	}
 
-	match, _:= regexp.MatchString("^(IMG-)?[a-zA-Z0-9-]{36}$",c.SourceImageId)
-	if ! match {
+	match, _ := regexp.MatchString("^(IMG-)?[a-zA-Z0-9-]{36}$", c.SourceImageId)
+	if !match {
 		errs = append(errs, fmt.Errorf("source_image_id can't matched"))
 	}
 

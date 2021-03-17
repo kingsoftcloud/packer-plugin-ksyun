@@ -29,20 +29,20 @@ func Halt(stateBag multistep.StateBag, err error, prefix string) multistep.StepA
 	return multistep.ActionHalt
 }
 
-func getSdkValue(stateBag multistep.StateBag,keyPattern string,obj interface{},) interface{}{
-	keys :=strings.Split(keyPattern, ".")
+func getSdkValue(stateBag multistep.StateBag, keyPattern string, obj interface{}) interface{} {
+	keys := strings.Split(keyPattern, ".")
 	root := obj
-	for index,k :=range keys{
+	for index, k := range keys {
 		if reflect.ValueOf(root).Kind() == reflect.Map {
 			root = root.(map[string]interface{})[k]
-			if root == nil{
+			if root == nil {
 				return root
 			}
 
-		}else if reflect.ValueOf(root).Kind() == reflect.Slice{
-			i,err:=strconv.Atoi(k)
-			if err !=nil{
-				Halt(stateBag,err,fmt.Sprintf("keyPattern %s index %d must number",keyPattern,index))
+		} else if reflect.ValueOf(root).Kind() == reflect.Slice {
+			i, err := strconv.Atoi(k)
+			if err != nil {
+				Halt(stateBag, err, fmt.Sprintf("keyPattern %s index %d must number", keyPattern, index))
 			}
 			if len(root.([]interface{})) < i {
 				return nil
@@ -53,7 +53,7 @@ func getSdkValue(stateBag multistep.StateBag,keyPattern string,obj interface{},)
 	return root
 }
 
-func getCidrIpRange(cidr string) (string,string, string) {
+func getCidrIpRange(cidr string) (string, string, string) {
 	ip := strings.Split(cidr, "/")[0]
 	ipSegs := strings.Split(ip, ".")
 	maskLen, _ := strconv.Atoi(strings.Split(cidr, "/")[1])
@@ -77,7 +77,7 @@ func getCidrHostNum(maskLen int) uint {
 
 func getCidrIpMask(maskLen int) string {
 	// ^uint32(0)二进制为32个比特1，通过向左位移，得到CIDR掩码的二进制
-	cidrMask := ^uint32(0) << uint(32 - maskLen)
+	cidrMask := ^uint32(0) << uint(32-maskLen)
 	fmt.Println(fmt.Sprintf("%b \n", cidrMask))
 	//计算CIDR掩码的四个片段，将想要得到的片段移动到内存最低8位后，将其强转为8位整型，从而得到
 	cidrMaskSeg1 := uint8(cidrMask >> 24)
@@ -94,20 +94,19 @@ func getIpSeg3Range(ipSegs []string, maskLen int) (int, int) {
 		return segIp, segIp
 	}
 	ipSeg, _ := strconv.Atoi(ipSegs[2])
-	return getIpSegRange(uint8(ipSeg), uint8(24 - maskLen))
+	return getIpSegRange(uint8(ipSeg), uint8(24-maskLen))
 }
 
 func getIpSeg4Range(ipSegs []string, maskLen int) (int, int) {
 	ipSeg, _ := strconv.Atoi(ipSegs[3])
-	segMinIp, segMaxIp := getIpSegRange(uint8(ipSeg), uint8(32 - maskLen))
-	return segMinIp + 1, segMaxIp-2
+	segMinIp, segMaxIp := getIpSegRange(uint8(ipSeg), uint8(32-maskLen))
+	return segMinIp + 1, segMaxIp - 2
 }
 
 func getIpSegRange(userSegIp, offset uint8) (int, int) {
 	var ipSegMax uint8 = 255
 	netSegIp := ipSegMax << offset
 	segMinIp := netSegIp & userSegIp
-	segMaxIp := userSegIp & (255 << offset) | ^(255 << offset)
+	segMaxIp := userSegIp&(255<<offset) | ^(255 << offset)
 	return int(segMinIp), int(segMaxIp)
 }
-

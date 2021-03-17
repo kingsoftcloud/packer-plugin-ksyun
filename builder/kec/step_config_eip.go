@@ -8,31 +8,31 @@ import (
 	"strconv"
 )
 
-type stepConfigKingcloudPublicIp struct {
-	KingcloudRunConfig *KingcloudRunConfig
-	eipId string
+type stepConfigKsyunPublicIp struct {
+	KsyunRunConfig *KsyunRunConfig
+	eipId          string
 }
 
-func (s *stepConfigKingcloudPublicIp) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
+func (s *stepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
 	client := stateBag.Get("client").(*ClientWrapper)
 	instanceId := stateBag.Get("InstanceId").(string)
-	chargeTypes := []string{"Daily","TrafficMonthly","DailyPaidByTransfer","HourlyInstantSettlement"}
+	chargeTypes := []string{"Daily", "TrafficMonthly", "DailyPaidByTransfer", "HourlyInstantSettlement"}
 	checkChargeType := false
-	if s.KingcloudRunConfig.AssociatePublicIpAddress {
-		if s.KingcloudRunConfig.PublicIpBandWidth == 0 {
+	if s.KsyunRunConfig.AssociatePublicIpAddress {
+		if s.KsyunRunConfig.PublicIpBandWidth == 0 {
 			// default bandwidth is 1 m
-			s.KingcloudRunConfig.PublicIpBandWidth = 1
-		}else if s.KingcloudRunConfig.PublicIpBandWidth > 100{
-			return Halt(stateBag,fmt.Errorf("public_ip max bandwidth must lower than 100"),"")
+			s.KsyunRunConfig.PublicIpBandWidth = 1
+		} else if s.KsyunRunConfig.PublicIpBandWidth > 100 {
+			return Halt(stateBag, fmt.Errorf("public_ip max bandwidth must lower than 100"), "")
 		}
-		if s.KingcloudRunConfig.PublicIpChargeType == ""{
+		if s.KsyunRunConfig.PublicIpChargeType == "" {
 			// default PublicIpChargeType is Daily
-			s.KingcloudRunConfig.PublicIpChargeType = "Daily"
+			s.KsyunRunConfig.PublicIpChargeType = "Daily"
 			checkChargeType = true
-		}else {
-			for _,v:= range chargeTypes{
-				if s.KingcloudRunConfig.PublicIpChargeType == v{
+		} else {
+			for _, v := range chargeTypes {
+				if s.KsyunRunConfig.PublicIpChargeType == v {
 					checkChargeType = true
 				}
 			}
@@ -41,28 +41,28 @@ func (s *stepConfigKingcloudPublicIp) Run(ctx context.Context, stateBag multiste
 			ui.Say("Allocating eip...")
 			//create eip
 			createEip := make(map[string]interface{})
-			createEip["BandWidth"] = strconv.Itoa(s.KingcloudRunConfig.PublicIpBandWidth)
-			createEip["ChargeType"] = s.KingcloudRunConfig.PublicIpChargeType
-			createEip["ProjectId"] = s.KingcloudRunConfig.ProjectId
-			createResp,createErr := client.EipClient.AllocateAddress(&createEip)
-			if createErr != nil{
+			createEip["BandWidth"] = strconv.Itoa(s.KsyunRunConfig.PublicIpBandWidth)
+			createEip["ChargeType"] = s.KsyunRunConfig.PublicIpChargeType
+			createEip["ProjectId"] = s.KsyunRunConfig.ProjectId
+			createResp, createErr := client.EipClient.AllocateAddress(&createEip)
+			if createErr != nil {
 				return Halt(stateBag, createErr, "Error creating new eip")
 			}
-			if createResp != nil{
-				allocationId := getSdkValue(stateBag,"AllocationId",*createResp).(string)
-				publicIp := getSdkValue(stateBag,"PublicIp",*createResp).(string)
+			if createResp != nil {
+				allocationId := getSdkValue(stateBag, "AllocationId", *createResp).(string)
+				publicIp := getSdkValue(stateBag, "PublicIp", *createResp).(string)
 				s.eipId = allocationId
-				stateBag.Put("publicIp",publicIp)
+				stateBag.Put("publicIp", publicIp)
 				ui.Say("Associating eip to instance")
 				//create_security_group_rule
 				authorizeSecurityGroupEntry := make(map[string]interface{})
-				authorizeSecurityGroupEntry["SecurityGroupId"] = s.KingcloudRunConfig.SecurityGroupId
+				authorizeSecurityGroupEntry["SecurityGroupId"] = s.KsyunRunConfig.SecurityGroupId
 				authorizeSecurityGroupEntry["CidrBlock"] = "0.0.0.0/0"
 				authorizeSecurityGroupEntry["Direction"] = "in"
 				authorizeSecurityGroupEntry["Protocol"] = "tcp"
 				authorizeSecurityGroupEntry["PortRangeFrom"] = strconv.Itoa(22)
 				authorizeSecurityGroupEntry["PortRangeTo"] = strconv.Itoa(22)
-				_,errRule := client.VpcClient.AuthorizeSecurityGroupEntry(&authorizeSecurityGroupEntry)
+				_, errRule := client.VpcClient.AuthorizeSecurityGroupEntry(&authorizeSecurityGroupEntry)
 				if errRule != nil {
 					return Halt(stateBag, errRule, "Error creating  eip SecurityGroupRule")
 				}
@@ -71,39 +71,36 @@ func (s *stepConfigKingcloudPublicIp) Run(ctx context.Context, stateBag multiste
 				associateAddress["AllocationId"] = allocationId
 				associateAddress["InstanceType"] = "Ipfwd"
 				associateAddress["InstanceId"] = instanceId
-				_,err := client.EipClient.AssociateAddress(&associateAddress)
-				if err != nil{
+				_, err := client.EipClient.AssociateAddress(&associateAddress)
+				if err != nil {
 					return Halt(stateBag, err, "Error associate eip to instance")
 				}
 			}
 
-		}else{
-			return Halt(stateBag,fmt.Errorf("public_ip_charge_type not match"),"")
+		} else {
+			return Halt(stateBag, fmt.Errorf("public_ip_charge_type not match"), "")
 		}
 	}
 	return multistep.ActionContinue
 }
 
-func (s *stepConfigKingcloudPublicIp) Cleanup(stateBag multistep.StateBag) {
+func (s *stepConfigKsyunPublicIp) Cleanup(stateBag multistep.StateBag) {
 	if s.eipId != "" {
 		ui := stateBag.Get("ui").(packersdk.Ui)
 		client := stateBag.Get("client").(*ClientWrapper)
-		ui.Say(fmt.Sprintf("Disassociate Eip with Id %s ",s.eipId))
+		ui.Say(fmt.Sprintf("Disassociate Eip with Id %s ", s.eipId))
 		disassociateEip := make(map[string]interface{})
 		disassociateEip["AllocationId"] = s.eipId
-		_,disassociateErr := client.EipClient.DisassociateAddress(&disassociateEip)
+		_, disassociateErr := client.EipClient.DisassociateAddress(&disassociateEip)
 		if disassociateErr != nil {
 			ui.Error(fmt.Sprintf("Error disassociate Eip %s", disassociateErr))
 		}
-		ui.Say(fmt.Sprintf("Deleting Eip with Id %s ",s.eipId))
+		ui.Say(fmt.Sprintf("Deleting Eip with Id %s ", s.eipId))
 		deleteEip := make(map[string]interface{})
 		deleteEip["AllocationId"] = s.eipId
-		_,err := client.EipClient.ReleaseAddress(&deleteEip)
+		_, err := client.EipClient.ReleaseAddress(&deleteEip)
 		if err != nil {
 			ui.Error(fmt.Sprintf("Error delete Eip %s", err))
 		}
 	}
 }
-
-
-

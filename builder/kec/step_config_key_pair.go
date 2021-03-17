@@ -8,12 +8,12 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 )
 
-type stepConfigKingcloudKeyPair struct {
-	KingcloudRunConfig *KingcloudRunConfig
-	Comm  *communicator.Config
+type stepConfigKsyunKeyPair struct {
+	KsyunRunConfig *KsyunRunConfig
+	Comm           *communicator.Config
 }
 
-func (s *stepConfigKingcloudKeyPair) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
+func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
 	client := stateBag.Get("client").(*ClientWrapper)
 	if s.Comm.SSHPrivateKeyFile != "" {
@@ -50,18 +50,17 @@ func (s *stepConfigKingcloudKeyPair) Run(ctx context.Context, stateBag multistep
 	//create ssh Key
 	createSSHKey := make(map[string]interface{})
 	createSSHKey["KeyName"] = s.Comm.SSHTemporaryKeyPairName
-	resp, err :=client.SksClient.CreateKey(&createSSHKey)
+	resp, err := client.SksClient.CreateKey(&createSSHKey)
 	if err != nil {
 		return Halt(stateBag, err, "Error creating new keypair")
 	}
 	if resp != nil {
-		s.Comm.SSHKeyPairName = getSdkValue(stateBag,"Key.KeyId",*resp).(string)
-		privateKey := getSdkValue(stateBag,"PrivateKey",*resp).(string)
+		s.Comm.SSHKeyPairName = getSdkValue(stateBag, "Key.KeyId", *resp).(string)
+		privateKey := getSdkValue(stateBag, "PrivateKey", *resp).(string)
 		s.Comm.SSHPrivateKey = []byte(privateKey)
 	}
 	return multistep.ActionContinue
 }
 
-func (s *stepConfigKingcloudKeyPair) Cleanup(stateBag multistep.StateBag) {
+func (s *stepConfigKsyunKeyPair) Cleanup(stateBag multistep.StateBag) {
 }
-

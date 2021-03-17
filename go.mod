@@ -1,4 +1,4 @@
-module github.com/kingsoftcloud/packer-plugin-kscloud
+module github.com/kingsoftcloud/packer-plugin-ksyun
 
 go 1.15
 
