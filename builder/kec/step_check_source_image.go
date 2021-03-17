@@ -20,7 +20,7 @@ func (s *stepCheckKsyunSourceImage) Run(ctx context.Context, stateBag multistep.
 	describeImages["ImageId"] = s.SourceImageId
 	_, err := client.KecClient.DescribeImages(&describeImages)
 	if err != nil {
-		return Halt(stateBag, err, "Error querying kingcloud image")
+		return Halt(stateBag, err, "Error querying ksyun image")
 	}
 
 	ui.Message(fmt.Sprintf("Found image ID: %s", s.SourceImageId))

@@ -6,11 +6,11 @@ import (
 )
 
 type Artifact struct {
-	// A map of regions to kingcloud image id.
+	// A map of regions to ksyun image id.
 	KsyunImageId string
-	// BuilderId is the unique ID for the builder that created this kingcloud image
+	// BuilderId is the unique ID for the builder that created this ksyun image
 	BuilderIdValue string
-	// kingcloud connection for performing API stuff.
+	// ksyun connection for performing API stuff.
 	Client *ClientWrapper
 }
 

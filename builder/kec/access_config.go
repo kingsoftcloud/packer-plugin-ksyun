@@ -1,5 +1,3 @@
-//go:generate struct-markdown
-
 package kec
 
 import (

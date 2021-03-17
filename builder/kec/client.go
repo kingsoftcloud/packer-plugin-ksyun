@@ -23,7 +23,7 @@ const (
 )
 
 const (
-	defaultKecInstanceName = "kingcloud_packer_vm"
+	defaultKecInstanceName = "ksyun_packer_vm"
 	defaultKecInstanceType = "I1.1A"
 	defaultKecSshUserName  = "root"
 	defaultKecChargeType   = "Daily"
@@ -34,16 +34,16 @@ const (
 )
 
 const (
-	defaultVpcName           = "kingcloud_packer_vpc"
+	defaultVpcName           = "ksyun_packer_vpc"
 	defaultVpcCidr           = "172.20.0.0/16"
-	defaultSubnetName        = "kingcloud_packer_subnet"
+	defaultSubnetName        = "ksyun_packer_subnet"
 	defaultSubnetCidr        = "172.20.1.0/24"
 	EnableSubnetType         = "Normal"
-	defaultSecurityGroupName = "kingcloud_packer_security_group"
+	defaultSecurityGroupName = "ksyun_packer_security_group"
 )
 
 const (
-	defaultSSHKeyName = "kingcloud_packer_ssh_key"
+	defaultSSHKeyName = "ksyun_packer_ssh_key"
 )
 
 type ProcessRequestResult struct {

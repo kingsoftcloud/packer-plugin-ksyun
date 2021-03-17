@@ -20,6 +20,7 @@ packer-test*.log
 
 *.received.txt
 *.received.json
+packer-plugin-ksyun
 
 .idea/
 *.iml

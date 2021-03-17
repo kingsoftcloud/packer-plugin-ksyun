@@ -9,7 +9,7 @@ import (
 
 func main() {
 	pps := plugin.NewSet()
-	pps.RegisterBuilder(plugin.DEFAULT_NAME, new(ksyun.Builder))
+	pps.RegisterBuilder("kec", new(ksyun.Builder))
 	err := pps.Run()
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())

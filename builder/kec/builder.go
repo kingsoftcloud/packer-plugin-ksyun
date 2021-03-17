@@ -1,7 +1,7 @@
 //go:generate mapstructure-to-hcl2 -type Config,KsyunDiskDevice,KsyunEbsDataDisk
 
-// The kingcloud  contains a packersdk.Builder implementation that
-// builds ecs images for kingcloud.
+// The ksyun  contains a packersdk.Builder implementation that
+// builds ecs images for ksyun.
 package kec
 
 import (
@@ -17,7 +17,7 @@ import (
 )
 
 // The unique ID for this builder
-const BuilderId = "kingcloud.kec"
+const BuilderId = "ksyun.kec"
 
 type Config struct {
 	common.PackerConfig `mapstructure:",squash"`

@@ -1,5 +1,3 @@
-//go:generate struct-markdown
-
 package kec
 
 import (
@@ -127,7 +125,7 @@ func (c *KsyunRunConfig) Prepare(ctx *interpolate.Context) []error {
 	}
 
 	if c.InstanceType == "" {
-		errs = append(errs, errors.New("A kingcloud_instance_type must be specified"))
+		errs = append(errs, errors.New("A ksyun_instance_type must be specified"))
 	}
 
 	return errs
