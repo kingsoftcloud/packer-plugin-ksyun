@@ -38,7 +38,7 @@ $ln -s $GOPATH/bin/packer-plugin-ksyun ~/.packer.d/plugins/packer-plugin-ksyun
 * Move the downloaded binary to `~/.packer.d/plugins/`
 
 ## Usage
-Here is a sample template, which you can also find in the `examples/` directory
+Here is a sample template, which you can also find in the `example/` directory
 ```json
 {
   "variables": {
@@ -72,7 +72,7 @@ export KSYUN_SECRET_KEY=<SK>
 ```
 Then run Packer using the example template with the command underneath.
 ```
-packer build examples/ksyun.json
+packer build example/ksyun.json
 ```
 
 
