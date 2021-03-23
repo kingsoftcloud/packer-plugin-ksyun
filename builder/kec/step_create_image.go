@@ -19,6 +19,9 @@ func (s *stepCreateKsyunImage) Run(ctx context.Context, stateBag multistep.State
 	createImage := make(map[string]interface{})
 	createImage["InstanceId"] = instanceId
 	createImage["Name"] = s.KsyunImageConfig.KsyunImageName
+	if s.KsyunImageConfig.KsyunImageType != "" {
+		createImage["Type"] = s.KsyunImageConfig.KsyunImageType
+	}
 	resp, errorCreate := client.KecClient.CreateImage(&createImage)
 	if errorCreate != nil {
 		return Halt(stateBag, errorCreate, "Error creating  kec image")

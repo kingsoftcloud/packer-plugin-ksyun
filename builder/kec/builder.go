@@ -6,6 +6,7 @@ package kec
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer-plugin-sdk/common"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
@@ -119,6 +120,12 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	// Run!
 	b.runner = commonsteps.NewRunner(steps, b.config.PackerConfig, ui)
 	b.runner.Run(ctx, stateBag)
+
+	// If there was an error, return that
+	if err, ok := stateBag.GetOk("error"); ok {
+		ui.Say(fmt.Sprintf("find some error %v ", err))
+		return nil, err.(error)
+	}
 
 	// Build the artifact and return it
 	artifact := &Artifact{
