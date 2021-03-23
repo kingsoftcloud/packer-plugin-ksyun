@@ -30,6 +30,18 @@ Link the build to Packer
 ```sh
 $ln -s $GOPATH/bin/packer-plugin-ksyun ~/.packer.d/plugins/packer-plugin-ksyun
 ```
+### Install from HCL:
+```hcl
+packer {
+  required_plugins {
+    ksyun = {
+      version = ">= 0.0.2"
+      source  = "github.com/kingsoftcloud/ksyun"
+    }
+  }
+}
+```
+
 
 ### Install from release:
 

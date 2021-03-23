@@ -44,7 +44,7 @@ func getSdkValue(stateBag multistep.StateBag, keyPattern string, obj interface{}
 			if err != nil {
 				Halt(stateBag, err, fmt.Sprintf("keyPattern %s index %d must number", keyPattern, index))
 			}
-			if len(root.([]interface{})) < i {
+			if len(root.([]interface{})) <= i {
 				return nil
 			}
 			root = root.([]interface{})[i]
