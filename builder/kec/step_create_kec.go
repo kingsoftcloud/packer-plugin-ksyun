@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hashicorp/packer-plugin-sdk/random"
 )
 
 type stepCreateKsyunKec struct {
@@ -79,16 +78,13 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 	createInstance["KeepImageLogin"] = false
 
 	//password/ssh/key
-	if s.KsyunRunConfig.Comm.SSHAgentAuth {
+	if s.KsyunRunConfig.Comm.SSHKeyPairName != "" {
 		createInstance["KeyId.1"] = s.KsyunRunConfig.Comm.SSHKeyPairName
 	} else {
-		s.KsyunRunConfig.Comm.SSHUsername = defaultKecSshUserName
 		if s.KsyunRunConfig.Comm.SSHPassword != "" {
 			createInstance["InstancePassword"] = s.KsyunRunConfig.Comm.SSHPassword
 		} else {
-			password := random.AlphaNumUpper(4) + random.AlphaNum(4) + random.AlphaNumLower(4)
-			s.KsyunRunConfig.Comm.SSHPassword = password
-			createInstance["InstancePassword"] = password
+			createInstance["InstancePassword"] = s.KsyunRunConfig.Comm.WinRMPassword
 		}
 	}
 	//chargeType
