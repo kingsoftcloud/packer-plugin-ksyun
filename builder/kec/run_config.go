@@ -106,7 +106,6 @@ type KsyunRunConfig struct {
 }
 
 func (c *KsyunRunConfig) Prepare(ctx *interpolate.Context) []error {
-	// SSH Validation
 	if c.Comm.SSHKeyPairName == "" && c.Comm.SSHTemporaryKeyPairName == "" &&
 		c.Comm.SSHPrivateKeyFile == "" && c.Comm.SSHPassword == "" && c.Comm.WinRMPassword == "" {
 		c.Comm.SSHTemporaryKeyPairName = fmt.Sprintf("packer_%s", uuid.TimeOrderedUUID())

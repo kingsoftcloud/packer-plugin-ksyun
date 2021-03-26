@@ -11,6 +11,7 @@ import (
 type stepConfigKsyunKeyPair struct {
 	KsyunRunConfig *KsyunRunConfig
 	Comm           *communicator.Config
+	keyId          string
 }
 
 func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
@@ -28,6 +29,7 @@ func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.Sta
 			return multistep.ActionHalt
 		}
 		s.Comm.SSHPrivateKey = privateKeyBytes
+		return multistep.ActionContinue
 	}
 
 	if s.Comm.SSHAgentAuth && s.Comm.SSHKeyPairName == "" {
@@ -58,9 +60,25 @@ func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.Sta
 		s.Comm.SSHKeyPairName = getSdkValue(stateBag, "Key.KeyId", *resp).(string)
 		privateKey := getSdkValue(stateBag, "PrivateKey", *resp).(string)
 		s.Comm.SSHPrivateKey = []byte(privateKey)
+		s.keyId = s.Comm.SSHKeyPairName
 	}
 	return multistep.ActionContinue
 }
 
 func (s *stepConfigKsyunKeyPair) Cleanup(stateBag multistep.StateBag) {
+	// if key not create by packer plugin no need to clean
+	if s.keyId != "" {
+		client := stateBag.Get("client").(*ClientWrapper)
+		ui := stateBag.Get("ui").(packersdk.Ui)
+		//delete ssh Key
+		ui.Say(fmt.Sprintf("Deleting temporary keypair %s ", s.Comm.SSHKeyPairName))
+		deleteSSHKey := make(map[string]interface{})
+		deleteSSHKey["KeyId"] = s.keyId
+		_, err := client.SksClient.DeleteKey(&deleteSSHKey)
+		if err != nil {
+			ui.Error(fmt.Sprintf(
+				"Error cleaning up keypair. Please delete the key manually: name = %s, id = %s",
+				s.Comm.SSHTemporaryKeyPairName, s.keyId))
+		}
+	}
 }
