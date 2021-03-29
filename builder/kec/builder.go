@@ -108,6 +108,9 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			SSHConfig: b.config.KsyunRunConfig.Comm.SSHConfigFunc(),
 		},
 		&commonsteps.StepProvision{},
+		&commonsteps.StepCleanupTempKeys{
+			Comm: &b.config.KsyunRunConfig.Comm,
+		},
 		&stepStopKsyunKec{
 			KsyunRunConfig: &b.config.KsyunRunConfig,
 		},
