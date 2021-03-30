@@ -6,12 +6,14 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"strings"
 )
 
 type stepConfigKsyunKeyPair struct {
-	KsyunRunConfig *KsyunRunConfig
-	Comm           *communicator.Config
-	keyId          string
+	KsyunRunConfig        *KsyunRunConfig
+	Comm                  *communicator.Config
+	keyId                 string
+	SSHTemporaryPublicKey *string
 }
 
 func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
@@ -59,7 +61,9 @@ func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.Sta
 	if resp != nil {
 		s.Comm.SSHKeyPairName = getSdkValue(stateBag, "Key.KeyId", *resp).(string)
 		privateKey := getSdkValue(stateBag, "PrivateKey", *resp).(string)
+		publicKey := getSdkValue(stateBag, "Key.PublicKey", *resp).(string)
 		s.Comm.SSHPrivateKey = []byte(privateKey)
+		*(s.SSHTemporaryPublicKey) = strings.Split(publicKey, " ")[1]
 		s.keyId = s.Comm.SSHKeyPairName
 	}
 	return multistep.ActionContinue

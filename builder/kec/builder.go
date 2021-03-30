@@ -73,7 +73,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	stateBag.Put("client", client)
 	stateBag.Put("hook", hook)
 	stateBag.Put("ui", ui)
-
+	//special
+	SSHTemporaryPublicKey := ""
 	//step
 	var steps []multistep.Step
 	steps = []multistep.Step{
@@ -84,8 +85,9 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			SourceImageId: b.config.SourceImageId,
 		},
 		&stepConfigKsyunKeyPair{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
-			Comm:           &b.config.KsyunRunConfig.Comm,
+			KsyunRunConfig:        &b.config.KsyunRunConfig,
+			Comm:                  &b.config.KsyunRunConfig.Comm,
+			SSHTemporaryPublicKey: &SSHTemporaryPublicKey,
 		},
 		&stepConfigKsyunVpc{
 			KsyunRunConfig: &b.config.KsyunRunConfig,
@@ -108,8 +110,9 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			SSHConfig: b.config.KsyunRunConfig.Comm.SSHConfigFunc(),
 		},
 		&commonsteps.StepProvision{},
-		&commonsteps.StepCleanupTempKeys{
-			Comm: &b.config.KsyunRunConfig.Comm,
+		&StepCleanupKsyunTempKeys{
+			Comm:                  &b.config.KsyunRunConfig.Comm,
+			SSHTemporaryPublicKey: &SSHTemporaryPublicKey,
 		},
 		&stepStopKsyunKec{
 			KsyunRunConfig: &b.config.KsyunRunConfig,

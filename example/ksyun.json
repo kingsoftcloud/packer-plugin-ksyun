@@ -12,6 +12,7 @@
     "source_image_id":"IMG-dd1f8324-1f27-46e0-ad6b-b41d8c8ff025",
     "instance_type":"N3.1B",
     "ssh_username":"root",
+    "ssh_clear_authorized_keys": true,
     "associate_public_ip_address": true
   }],
   "provisioners": [{
