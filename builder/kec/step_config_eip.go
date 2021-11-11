@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 	"strconv"
 )
 
 type stepConfigKsyunPublicIp struct {
-	KsyunRunConfig *KsyunRunConfig
+	KsyunRunConfig *KsyunKecRunConfig
 	eipId          string
 }
 
@@ -24,7 +25,7 @@ func (s *stepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 			// default bandwidth is 1 m
 			s.KsyunRunConfig.PublicIpBandWidth = 1
 		} else if s.KsyunRunConfig.PublicIpBandWidth > 100 {
-			return Halt(stateBag, fmt.Errorf("public_ip max bandwidth must lower than 100"), "")
+			return ksyun.Halt(stateBag, fmt.Errorf("public_ip max bandwidth must lower than 100"), "")
 		}
 		if s.KsyunRunConfig.PublicIpChargeType == "" {
 			// default PublicIpChargeType is Daily
@@ -46,11 +47,11 @@ func (s *stepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 			createEip["ProjectId"] = s.KsyunRunConfig.ProjectId
 			createResp, createErr := client.EipClient.AllocateAddress(&createEip)
 			if createErr != nil {
-				return Halt(stateBag, createErr, "Error creating new eip")
+				return ksyun.Halt(stateBag, createErr, "Error creating new eip")
 			}
 			if createResp != nil {
-				allocationId := getSdkValue(stateBag, "AllocationId", *createResp).(string)
-				publicIp := getSdkValue(stateBag, "PublicIp", *createResp).(string)
+				allocationId := ksyun.GetSdkValue(stateBag, "AllocationId", *createResp).(string)
+				publicIp := ksyun.GetSdkValue(stateBag, "PublicIp", *createResp).(string)
 				s.eipId = allocationId
 				stateBag.Put("publicIp", publicIp)
 				ui.Say("Associating eip to instance")
@@ -64,7 +65,7 @@ func (s *stepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 				authorizeSecurityGroupEntry["PortRangeTo"] = strconv.Itoa(22)
 				_, errRule := client.VpcClient.AuthorizeSecurityGroupEntry(&authorizeSecurityGroupEntry)
 				if errRule != nil {
-					return Halt(stateBag, errRule, "Error creating  eip SecurityGroupRule")
+					return ksyun.Halt(stateBag, errRule, "Error creating  eip SecurityGroupRule")
 				}
 				//associate eip
 				associateAddress := make(map[string]interface{})
@@ -73,12 +74,12 @@ func (s *stepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 				associateAddress["InstanceId"] = instanceId
 				_, err := client.EipClient.AssociateAddress(&associateAddress)
 				if err != nil {
-					return Halt(stateBag, err, "Error associate eip to instance")
+					return ksyun.Halt(stateBag, err, "Error associate eip to instance")
 				}
 			}
 
 		} else {
-			return Halt(stateBag, fmt.Errorf("public_ip_charge_type not match"), "")
+			return ksyun.Halt(stateBag, fmt.Errorf("public_ip_charge_type not match"), "")
 		}
 	}
 	return multistep.ActionContinue

@@ -15,6 +15,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
 // The unique ID for this builder
@@ -22,9 +23,9 @@ const BuilderId = "ksyun.kec"
 
 type Config struct {
 	common.PackerConfig `mapstructure:",squash"`
-	KsyunAccessConfig   `mapstructure:",squash"`
+	ClientConfig        `mapstructure:",squash"`
 	KsyunImageConfig    `mapstructure:",squash"`
-	KsyunRunConfig      `mapstructure:",squash"`
+	KsyunKecRunConfig   `mapstructure:",squash"`
 
 	ctx interpolate.Context
 }
@@ -54,9 +55,9 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 	// Accumulate any errors
 	var errs *packersdk.MultiError
-	errs = packersdk.MultiErrorAppend(errs, b.config.KsyunAccessConfig.Prepare(&b.config.ctx)...)
+	errs = packersdk.MultiErrorAppend(errs, b.config.ClientConfig.Prepare(&b.config.ctx)...)
 	errs = packersdk.MultiErrorAppend(errs, b.config.KsyunImageConfig.Prepare(&b.config.ctx)...)
-	errs = packersdk.MultiErrorAppend(errs, b.config.KsyunRunConfig.Prepare(&b.config.ctx)...)
+	errs = packersdk.MultiErrorAppend(errs, b.config.KsyunKecRunConfig.Prepare(&b.config.ctx)...)
 
 	if errs != nil && len(errs.Errors) > 0 {
 		return nil, nil, errs
@@ -79,46 +80,46 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	var steps []multistep.Step
 	steps = []multistep.Step{
 		&stepConfigKsyunCommon{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
+			KsyunRunConfig: &b.config.KsyunKecRunConfig,
 		},
 		&stepCheckKsyunSourceImage{
 			SourceImageId: b.config.SourceImageId,
 		},
 		&stepConfigKsyunKeyPair{
-			KsyunRunConfig:        &b.config.KsyunRunConfig,
-			Comm:                  &b.config.KsyunRunConfig.Comm,
+			KsyunRunConfig:        &b.config.KsyunKecRunConfig,
+			Comm:                  &b.config.KsyunKecRunConfig.Comm,
 			SSHTemporaryPublicKey: &SSHTemporaryPublicKey,
 		},
 		&stepConfigKsyunVpc{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
+			KsyunRunConfig: &b.config.KsyunKecRunConfig,
 		},
 		&stepConfigKsyunSubnet{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
+			KsyunRunConfig: &b.config.KsyunKecRunConfig,
 		},
 		&stepConfigKsyunSecurityGroup{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
+			KsyunRunConfig: &b.config.KsyunKecRunConfig,
 		},
 		&stepCreateKsyunKec{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
+			KsyunRunConfig: &b.config.KsyunKecRunConfig,
 		},
 		&stepConfigKsyunPublicIp{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
+			KsyunRunConfig: &b.config.KsyunKecRunConfig,
 		},
 		&communicator.StepConnect{
-			Config:    &b.config.KsyunRunConfig.Comm,
-			Host:      SSHHost(b.config.KsyunRunConfig.Comm),
-			SSHConfig: b.config.KsyunRunConfig.Comm.SSHConfigFunc(),
+			Config:    &b.config.KsyunKecRunConfig.Comm,
+			Host:      ksyun.SSHHost(b.config.KsyunKecRunConfig.Comm),
+			SSHConfig: b.config.KsyunKecRunConfig.Comm.SSHConfigFunc(),
 		},
 		&commonsteps.StepProvision{},
 		&StepCleanupKsyunTempKeys{
-			Comm:                  &b.config.KsyunRunConfig.Comm,
+			Comm:                  &b.config.KsyunKecRunConfig.Comm,
 			SSHTemporaryPublicKey: &SSHTemporaryPublicKey,
 		},
 		&stepStopKsyunKec{
-			KsyunRunConfig: &b.config.KsyunRunConfig,
+			KsyunRunConfig: &b.config.KsyunKecRunConfig,
 		},
 		&stepCreateKsyunImage{
-			KsyunRunConfig:   &b.config.KsyunRunConfig,
+			KsyunRunConfig:   &b.config.KsyunKecRunConfig,
 			KsyunImageConfig: &b.config.KsyunImageConfig,
 		},
 	}

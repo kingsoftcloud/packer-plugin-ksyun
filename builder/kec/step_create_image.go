@@ -4,10 +4,11 @@ import (
 	"context"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
 type stepCreateKsyunImage struct {
-	KsyunRunConfig   *KsyunRunConfig
+	KsyunRunConfig   *KsyunKecRunConfig
 	KsyunImageConfig *KsyunImageConfig
 }
 
@@ -24,14 +25,14 @@ func (s *stepCreateKsyunImage) Run(ctx context.Context, stateBag multistep.State
 	}
 	resp, errorCreate := client.KecClient.CreateImage(&createImage)
 	if errorCreate != nil {
-		return Halt(stateBag, errorCreate, "Error creating  kec image")
+		return ksyun.Halt(stateBag, errorCreate, "Error creating  kec image")
 	}
 	if resp != nil {
 		ui.Say("Waiting Ksyun Kec Image active")
-		imageId := getSdkValue(stateBag, "ImageId", *resp).(string)
+		imageId := ksyun.GetSdkValue(stateBag, "ImageId", *resp).(string)
 		_, err := client.WaitKecImageStatus(stateBag, imageId, "active")
 		if err != nil {
-			return Halt(stateBag, err, "Error waiting  kec image active")
+			return ksyun.Halt(stateBag, err, "Error waiting  kec image active")
 		}
 		stateBag.Put("TargetImageId", imageId)
 	}

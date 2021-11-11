@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
 type stepConfigKsyunSubnet struct {
-	KsyunRunConfig *KsyunRunConfig
+	KsyunRunConfig *KsyunKecRunConfig
 	subnetId       string
 }
 
@@ -22,24 +23,24 @@ func (s *stepConfigKsyunSubnet) Run(ctx context.Context, stateBag multistep.Stat
 		querySubnet["SubnetId.1"] = s.KsyunRunConfig.SubnetId
 		resp, err := client.VpcClient.DescribeSubnets(&querySubnet)
 		if err != nil {
-			return Halt(stateBag, err, fmt.Sprintf("Error query Subnet with id %s", s.KsyunRunConfig.SubnetId))
+			return ksyun.Halt(stateBag, err, fmt.Sprintf("Error query Subnet with id %s", s.KsyunRunConfig.SubnetId))
 		}
 		if resp != nil {
-			subnetId := getSdkValue(stateBag, "SubnetSet.0.SubnetId", *resp)
-			subnetType := getSdkValue(stateBag, "SubnetSet.0.SubnetType", *resp)
-			subnetName := getSdkValue(stateBag, "SubnetSet.0.SubnetName", *resp)
-			vpcId := getSdkValue(stateBag, "SubnetSet.0.VpcId", *resp)
+			subnetId := ksyun.GetSdkValue(stateBag, "SubnetSet.0.SubnetId", *resp)
+			subnetType := ksyun.GetSdkValue(stateBag, "SubnetSet.0.SubnetType", *resp)
+			subnetName := ksyun.GetSdkValue(stateBag, "SubnetSet.0.SubnetName", *resp)
+			vpcId := ksyun.GetSdkValue(stateBag, "SubnetSet.0.VpcId", *resp)
 			if subnetId == nil {
-				return Halt(stateBag, err, fmt.Sprintf("Subnet id %s not found", s.KsyunRunConfig.SubnetId))
+				return ksyun.Halt(stateBag, err, fmt.Sprintf("Subnet id %s not found", s.KsyunRunConfig.SubnetId))
 			}
 
 			if vpcId != s.KsyunRunConfig.VpcId {
-				return Halt(stateBag, fmt.Errorf(fmt.Sprintf("Subnet id %s vpc not match",
+				return ksyun.Halt(stateBag, fmt.Errorf(fmt.Sprintf("Subnet id %s vpc not match",
 					s.KsyunRunConfig.SubnetId)), "")
 			}
 
 			if subnetType != EnableSubnetType {
-				return Halt(stateBag,
+				return ksyun.Halt(stateBag,
 					fmt.Errorf(fmt.Sprintf("Subnet id %s Type is Not %s", EnableSubnetType, s.KsyunRunConfig.SubnetId)), "")
 			}
 			ui.Say(fmt.Sprintf("Using existing Subnet id is %s name is %s", s.KsyunRunConfig.SubnetId,
@@ -54,7 +55,7 @@ func (s *stepConfigKsyunSubnet) Run(ctx context.Context, stateBag multistep.Stat
 		if s.KsyunRunConfig.SubnetCidrBlock == "" {
 			s.KsyunRunConfig.SubnetCidrBlock = defaultSubnetCidr
 		}
-		startIp, minIp, maxIp := getCidrIpRange(s.KsyunRunConfig.SubnetCidrBlock)
+		startIp, minIp, maxIp := ksyun.GetCidrIpRange(s.KsyunRunConfig.SubnetCidrBlock)
 		ui.Say(fmt.Sprintf("Creating new Subnet with name  %s cidr %s vpcId %s",
 			s.KsyunRunConfig.SubnetName, s.KsyunRunConfig.SubnetCidrBlock, s.KsyunRunConfig.VpcId))
 		createSubnet := make(map[string]interface{})
@@ -70,10 +71,10 @@ func (s *stepConfigKsyunSubnet) Run(ctx context.Context, stateBag multistep.Stat
 		}
 		resp, err := client.VpcClient.CreateSubnet(&createSubnet)
 		if err != nil {
-			return Halt(stateBag, err, "Error creating new Subnet")
+			return ksyun.Halt(stateBag, err, "Error creating new Subnet")
 		}
 		if resp != nil {
-			s.KsyunRunConfig.SubnetId = getSdkValue(stateBag, "Subnet.SubnetId", *resp).(string)
+			s.KsyunRunConfig.SubnetId = ksyun.GetSdkValue(stateBag, "Subnet.SubnetId", *resp).(string)
 			s.subnetId = s.KsyunRunConfig.SubnetId
 		}
 		return multistep.ActionContinue

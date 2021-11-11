@@ -7,6 +7,7 @@ import (
 	"github.com/KscSDK/ksc-sdk-go/service/sks"
 	"github.com/KscSDK/ksc-sdk-go/service/vpc"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 	"time"
 )
 
@@ -128,11 +129,11 @@ func (c *ClientWrapper) WaitKecInstanceStatus(stateBag multistep.StateBag, insta
 			if err != nil {
 				return RequestResourceRetry
 			}
-			kecId := getSdkValue(stateBag, "InstancesSet.0.InstanceId", *resp)
+			kecId := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceId", *resp)
 			if kecId == nil {
 				return RequestResourceRetry
 			}
-			kecState := getSdkValue(stateBag, "InstancesSet.0.InstanceState.Name", *resp).(string)
+			kecState := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceState.Name", *resp).(string)
 			if kecState == status {
 				return RequestResourceSuccess
 			}
@@ -154,11 +155,11 @@ func (c *ClientWrapper) WaitKecImageStatus(stateBag multistep.StateBag, imageId 
 			if err != nil {
 				return RequestResourceRetry
 			}
-			id := getSdkValue(stateBag, "ImagesSet.0.ImageId", *resp)
+			id := ksyun.GetSdkValue(stateBag, "ImagesSet.0.ImageId", *resp)
 			if id == nil {
 				return RequestResourceRetry
 			}
-			state := getSdkValue(stateBag, "ImagesSet.0.ImageState", *resp).(string)
+			state := ksyun.GetSdkValue(stateBag, "ImagesSet.0.ImageState", *resp).(string)
 			if state == status {
 				return RequestResourceSuccess
 			}
@@ -181,7 +182,7 @@ func (c *ClientWrapper) WaitSecurityGroupClean(stateBag multistep.StateBag, secu
 			if err != nil {
 				return RequestResourceRetry
 			}
-			networkInterfaces := getSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
+			networkInterfaces := ksyun.GetSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
 			if len(networkInterfaces) == 0 {
 				return RequestResourceSuccess
 			}
@@ -204,7 +205,7 @@ func (c *ClientWrapper) WaitSubnetClean(stateBag multistep.StateBag, subnetId st
 			if err != nil {
 				return RequestResourceRetry
 			}
-			networkInterfaces := getSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
+			networkInterfaces := ksyun.GetSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
 			if len(networkInterfaces) == 0 {
 				return RequestResourceSuccess
 			}

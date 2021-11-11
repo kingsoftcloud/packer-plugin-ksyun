@@ -6,7 +6,7 @@ import (
 )
 
 type stepConfigKsyunCommon struct {
-	KsyunRunConfig *KsyunRunConfig
+	KsyunRunConfig *KsyunKecRunConfig
 }
 
 func (s *stepConfigKsyunCommon) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {

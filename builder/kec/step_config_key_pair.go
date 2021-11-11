@@ -6,11 +6,12 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 	"strings"
 )
 
 type stepConfigKsyunKeyPair struct {
-	KsyunRunConfig        *KsyunRunConfig
+	KsyunRunConfig        *KsyunKecRunConfig
 	Comm                  *communicator.Config
 	keyId                 string
 	SSHTemporaryPublicKey *string
@@ -21,7 +22,7 @@ func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.Sta
 	client := stateBag.Get("client").(*ClientWrapper)
 	if s.Comm.SSHPrivateKeyFile != "" {
 		if s.Comm.SSHKeyPairName == "" {
-			return Halt(stateBag,
+			return ksyun.Halt(stateBag,
 				fmt.Errorf(fmt.Sprintf("ssh_keypair_name is empty")), "")
 		}
 		ui.Say("Using existing SSH private key")
@@ -56,12 +57,12 @@ func (s *stepConfigKsyunKeyPair) Run(ctx context.Context, stateBag multistep.Sta
 	createSSHKey["KeyName"] = s.Comm.SSHTemporaryKeyPairName
 	resp, err := client.SksClient.CreateKey(&createSSHKey)
 	if err != nil {
-		return Halt(stateBag, err, "Error creating new keypair")
+		return ksyun.Halt(stateBag, err, "Error creating new keypair")
 	}
 	if resp != nil {
-		s.Comm.SSHKeyPairName = getSdkValue(stateBag, "Key.KeyId", *resp).(string)
-		privateKey := getSdkValue(stateBag, "PrivateKey", *resp).(string)
-		publicKey := getSdkValue(stateBag, "Key.PublicKey", *resp).(string)
+		s.Comm.SSHKeyPairName = ksyun.GetSdkValue(stateBag, "Key.KeyId", *resp).(string)
+		privateKey := ksyun.GetSdkValue(stateBag, "PrivateKey", *resp).(string)
+		publicKey := ksyun.GetSdkValue(stateBag, "Key.PublicKey", *resp).(string)
 		s.Comm.SSHPrivateKey = []byte(privateKey)
 		*(s.SSHTemporaryPublicKey) = strings.Split(publicKey, " ")[1]
 		s.keyId = s.Comm.SSHKeyPairName

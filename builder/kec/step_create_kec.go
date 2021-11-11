@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
 type stepCreateKsyunKec struct {
-	KsyunRunConfig *KsyunRunConfig
+	KsyunRunConfig *KsyunKecRunConfig
 	InstanceId     string
 }
 
@@ -101,7 +102,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 		}
 	}
 	if !checkChargeType {
-		return Halt(stateBag, fmt.Errorf("instance_charge_type not match"), "")
+		return ksyun.Halt(stateBag, fmt.Errorf("instance_charge_type not match"), "")
 	}
 	createInstance["ChargeType"] = s.KsyunRunConfig.InstanceChargeType
 	//SriovNetSupport
@@ -115,17 +116,17 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 	//create
 	createResp, createErr := client.KecClient.RunInstances(&createInstance)
 	if createErr != nil {
-		return Halt(stateBag, createErr, "Error creating new kec instance")
+		return ksyun.Halt(stateBag, createErr, "Error creating new kec instance")
 	}
 	if createResp != nil {
 		//Get data
-		instanceId := getSdkValue(stateBag, "InstancesSet.0.InstanceId", *createResp).(string)
+		instanceId := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceId", *createResp).(string)
 		s.InstanceId = instanceId
 		// wait
 		ui.Say("Waiting Ksyun Kec Instance Active")
 		_, waitErr := client.WaitKecInstanceStatus(stateBag, instanceId, s.KsyunRunConfig.ProjectId, "active")
 		if waitErr != nil {
-			return Halt(stateBag, createErr, fmt.Sprintf("Error Wait new kec instance id %s status active", instanceId))
+			return ksyun.Halt(stateBag, createErr, fmt.Sprintf("Error Wait new kec instance id %s status active", instanceId))
 		}
 		stateBag.Put("InstanceId", instanceId)
 	}

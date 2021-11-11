@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
 type stepConfigKsyunVpc struct {
-	KsyunRunConfig *KsyunRunConfig
+	KsyunRunConfig *KsyunKecRunConfig
 	vpcId          string
 }
 
@@ -22,12 +23,12 @@ func (s *stepConfigKsyunVpc) Run(ctx context.Context, stateBag multistep.StateBa
 		queryVpc["VpcId.1"] = s.KsyunRunConfig.VpcId
 		resp, err := client.VpcClient.DescribeVpcs(&queryVpc)
 		if err != nil {
-			return Halt(stateBag, err, fmt.Sprintf("Error query Vpc with id %s", s.KsyunRunConfig.VpcId))
+			return ksyun.Halt(stateBag, err, fmt.Sprintf("Error query Vpc with id %s", s.KsyunRunConfig.VpcId))
 		}
 		if resp != nil {
-			vpcId := getSdkValue(stateBag, "VpcSet.0.VpcId", *resp)
+			vpcId := ksyun.GetSdkValue(stateBag, "VpcSet.0.VpcId", *resp)
 			if vpcId == nil {
-				return Halt(stateBag, err, fmt.Sprintf("Vpc id %s not found", s.KsyunRunConfig.VpcId))
+				return ksyun.Halt(stateBag, err, fmt.Sprintf("Vpc id %s not found", s.KsyunRunConfig.VpcId))
 			}
 		}
 		ui.Say(fmt.Sprintf("Using existing Vpc id is %s", s.KsyunRunConfig.VpcId))
@@ -47,10 +48,10 @@ func (s *stepConfigKsyunVpc) Run(ctx context.Context, stateBag multistep.StateBa
 		createVpc["CidrBlock"] = s.KsyunRunConfig.VpcCidrBlock
 		resp, err := client.VpcClient.CreateVpc(&createVpc)
 		if err != nil {
-			return Halt(stateBag, err, "Error creating new Vpc")
+			return ksyun.Halt(stateBag, err, "Error creating new Vpc")
 		}
 		if resp != nil {
-			s.KsyunRunConfig.VpcId = getSdkValue(stateBag, "Vpc.VpcId", *resp).(string)
+			s.KsyunRunConfig.VpcId = ksyun.GetSdkValue(stateBag, "Vpc.VpcId", *resp).(string)
 			s.vpcId = s.KsyunRunConfig.VpcId
 		}
 		return multistep.ActionContinue

@@ -18,7 +18,7 @@ type KsyunEbsDataDisk struct {
 	EbsDataDiskSnapshotId string `mapstructure:"data_disk_snapshot_id" required:"false"`
 }
 
-type KsyunRunConfig struct {
+type KsyunKecRunConfig struct {
 	//Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
 	InstanceType  string `mapstructure:"instance_type" required:"true"`
 	SourceImageId string `mapstructure:"source_image_id" required:"true"`
@@ -105,7 +105,7 @@ type KsyunRunConfig struct {
 	Comm communicator.Config `mapstructure:",squash"`
 }
 
-func (c *KsyunRunConfig) Prepare(ctx *interpolate.Context) []error {
+func (c *KsyunKecRunConfig) Prepare(ctx *interpolate.Context) []error {
 	if c.Comm.SSHKeyPairName == "" && c.Comm.SSHTemporaryKeyPairName == "" &&
 		c.Comm.SSHPrivateKeyFile == "" && c.Comm.SSHPassword == "" && c.Comm.WinRMPassword == "" {
 		c.Comm.SSHTemporaryKeyPairName = fmt.Sprintf("packer_%s", uuid.TimeOrderedUUID())
