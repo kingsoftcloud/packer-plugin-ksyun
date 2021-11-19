@@ -8,9 +8,9 @@
     "access_key":"{{user `access_key`}}",
     "secret_key":"{{user `secret_key`}}",
     "region":"cn-shanghai-2",
-    "image_name":"packer_test",
+    "image_name":"packer_test111",
     "source_image_id":"IMG-dd1f8324-1f27-46e0-ad6b-b41d8c8ff025",
-    "instance_type":"N3.1B",
+    "instance_type":"I3.2B",
     "ssh_username":"root",
     "ssh_clear_authorized_keys": true,
     "associate_public_ip_address": true

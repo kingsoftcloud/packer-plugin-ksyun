@@ -1,18 +1,12 @@
-package kec
+package ksyun
 
 import (
 	"fmt"
-	"github.com/KscSDK/ksc-sdk-go/ksc"
-	"github.com/KscSDK/ksc-sdk-go/ksc/utils"
-	"github.com/KscSDK/ksc-sdk-go/service/eip"
-	"github.com/KscSDK/ksc-sdk-go/service/kec"
-	"github.com/KscSDK/ksc-sdk-go/service/sks"
-	"github.com/KscSDK/ksc-sdk-go/service/vpc"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"os"
 )
 
-type KsyunAccessConfig struct {
+type AccessConfig struct {
 	// Ksyun access key must be provided unless `profile` is set, but it can
 	// also be sourced from the `KSYUN_ACCESS_KEY` environment variable.
 	KsyunAccessKey string `mapstructure:"access_key" required:"true"`
@@ -22,35 +16,9 @@ type KsyunAccessConfig struct {
 	// Ksyun region must be provided unless `profile` is set, but it can
 	// also be sourced from the `KSYUN_REGION` environment variable.
 	KsyunRegion string `mapstructure:"region" required:"true"`
-
-	client *ClientWrapper
 }
 
-func (c *KsyunAccessConfig) Client() *ClientWrapper {
-	if c.client != nil {
-		return c.client
-	}
-	c.client = &ClientWrapper{}
-	c.client.KecClient = kec.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
-		&ksc.Config{Region: &c.KsyunRegion}, &utils.UrlInfo{
-			UseSSL: true,
-		})
-	c.client.SksClient = sks.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
-		&ksc.Config{Region: &c.KsyunRegion}, &utils.UrlInfo{
-			UseSSL: true,
-		})
-	c.client.EipClient = eip.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
-		&ksc.Config{Region: &c.KsyunRegion}, &utils.UrlInfo{
-			UseSSL: true,
-		})
-	c.client.VpcClient = vpc.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
-		&ksc.Config{Region: &c.KsyunRegion}, &utils.UrlInfo{
-			UseSSL: true,
-		})
-	return c.client
-}
-
-func (c *KsyunAccessConfig) Config() error {
+func (c *AccessConfig) Config() error {
 	if c.KsyunAccessKey == "" {
 		c.KsyunAccessKey = os.Getenv("KSYUN_ACCESS_KEY")
 	}
@@ -64,7 +32,7 @@ func (c *KsyunAccessConfig) Config() error {
 
 }
 
-func (c *KsyunAccessConfig) Prepare(ctx *interpolate.Context) []error {
+func (c *AccessConfig) Prepare(ctx *interpolate.Context) []error {
 	var errs []error
 	if err := c.Config(); err != nil {
 		errs = append(errs, err)

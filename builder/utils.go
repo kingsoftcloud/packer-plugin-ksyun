@@ -1,4 +1,4 @@
-package kec
+package ksyun
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ func Halt(stateBag multistep.StateBag, err error, prefix string) multistep.StepA
 	return multistep.ActionHalt
 }
 
-func getSdkValue(stateBag multistep.StateBag, keyPattern string, obj interface{}) interface{} {
+func GetSdkValue(stateBag multistep.StateBag, keyPattern string, obj interface{}) interface{} {
 	keys := strings.Split(keyPattern, ".")
 	root := obj
 	for index, k := range keys {
@@ -53,12 +53,12 @@ func getSdkValue(stateBag multistep.StateBag, keyPattern string, obj interface{}
 	return root
 }
 
-func getCidrIpRange(cidr string) (string, string, string) {
+func GetCidrIpRange(cidr string) (string, string, string) {
 	ip := strings.Split(cidr, "/")[0]
 	ipSegs := strings.Split(ip, ".")
 	maskLen, _ := strconv.Atoi(strings.Split(cidr, "/")[1])
-	seg3MinIp, seg3MaxIp := getIpSeg3Range(ipSegs, maskLen)
-	seg4MinIp, seg4MaxIp := getIpSeg4Range(ipSegs, maskLen)
+	seg3MinIp, seg3MaxIp := GetIpSeg3Range(ipSegs, maskLen)
+	seg4MinIp, seg4MaxIp := GetIpSeg4Range(ipSegs, maskLen)
 	ipPrefix := ipSegs[0] + "." + ipSegs[1] + "."
 
 	return ipPrefix + strconv.Itoa(seg3MinIp) + "." + strconv.Itoa(seg4MinIp),
@@ -66,7 +66,7 @@ func getCidrIpRange(cidr string) (string, string, string) {
 		ipPrefix + strconv.Itoa(seg3MaxIp) + "." + strconv.Itoa(seg4MaxIp-2)
 }
 
-func getCidrHostNum(maskLen int) uint {
+func GetCidrHostNum(maskLen int) uint {
 	cidrIpNum := uint(0)
 	var i uint = uint(32 - maskLen - 1)
 	for ; i >= 1; i-- {
@@ -75,7 +75,7 @@ func getCidrHostNum(maskLen int) uint {
 	return cidrIpNum
 }
 
-func getCidrIpMask(maskLen int) string {
+func GetCidrIpMask(maskLen int) string {
 	// ^uint32(0)二进制为32个比特1，通过向左位移，得到CIDR掩码的二进制
 	cidrMask := ^uint32(0) << uint(32-maskLen)
 	fmt.Println(fmt.Sprintf("%b \n", cidrMask))
@@ -88,22 +88,22 @@ func getCidrIpMask(maskLen int) string {
 	return fmt.Sprint(cidrMaskSeg1) + "." + fmt.Sprint(cidrMaskSeg2) + "." + fmt.Sprint(cidrMaskSeg3) + "." + fmt.Sprint(cidrMaskSeg4)
 }
 
-func getIpSeg3Range(ipSegs []string, maskLen int) (int, int) {
+func GetIpSeg3Range(ipSegs []string, maskLen int) (int, int) {
 	if maskLen > 24 {
 		segIp, _ := strconv.Atoi(ipSegs[2])
 		return segIp, segIp
 	}
 	ipSeg, _ := strconv.Atoi(ipSegs[2])
-	return getIpSegRange(uint8(ipSeg), uint8(24-maskLen))
+	return GetIpSegRange(uint8(ipSeg), uint8(24-maskLen))
 }
 
-func getIpSeg4Range(ipSegs []string, maskLen int) (int, int) {
+func GetIpSeg4Range(ipSegs []string, maskLen int) (int, int) {
 	ipSeg, _ := strconv.Atoi(ipSegs[3])
-	segMinIp, segMaxIp := getIpSegRange(uint8(ipSeg), uint8(32-maskLen))
+	segMinIp, segMaxIp := GetIpSegRange(uint8(ipSeg), uint8(32-maskLen))
 	return segMinIp + 1, segMaxIp - 2
 }
 
-func getIpSegRange(userSegIp, offset uint8) (int, int) {
+func GetIpSegRange(userSegIp, offset uint8) (int, int) {
 	var ipSegMax uint8 = 255
 	netSegIp := ipSegMax << offset
 	segMinIp := netSegIp & userSegIp

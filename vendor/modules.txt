@@ -25,13 +25,14 @@ github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlbuilder
 github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlele
 github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlnode
 github.com/ChrisTrenkamp/goxpath/xconst
-# github.com/KscSDK/ksc-sdk-go v0.1.16
+# github.com/KscSDK/ksc-sdk-go v0.1.41 => ../../KscSDK/ksc-sdk-go
 ## explicit
 github.com/KscSDK/ksc-sdk-go/ksc
 github.com/KscSDK/ksc-sdk-go/ksc/kscbody
 github.com/KscSDK/ksc-sdk-go/ksc/kscquery
 github.com/KscSDK/ksc-sdk-go/ksc/utils
 github.com/KscSDK/ksc-sdk-go/service/eip
+github.com/KscSDK/ksc-sdk-go/service/epc
 github.com/KscSDK/ksc-sdk-go/service/kec
 github.com/KscSDK/ksc-sdk-go/service/sks
 github.com/KscSDK/ksc-sdk-go/service/vpc
@@ -479,3 +480,4 @@ gopkg.in/square/go-jose.v2
 gopkg.in/square/go-jose.v2/cipher
 gopkg.in/square/go-jose.v2/json
 gopkg.in/square/go-jose.v2/jwt
+# github.com/KscSDK/ksc-sdk-go => ../../KscSDK/ksc-sdk-go

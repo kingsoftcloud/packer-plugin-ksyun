@@ -22,14 +22,9 @@ Enter the provider directory and build the provider
 
 ```sh
 $ cd $GOPATH/src/github.com/kingsoftcloud/packer-plugin-ksyun
-$ make build
+$ make install
 ```
 
-Link the build to Packer
-
-```sh
-$ln -s $GOPATH/bin/packer-plugin-ksyun ~/.packer.d/plugins/packer-plugin-ksyun
-```
 ### Install from HCL:
 ```hcl
 packer {
