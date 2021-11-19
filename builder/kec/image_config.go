@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-type KsyunDiskDevice struct {
+type KsyunKecDiskDevice struct {
 	// The instance needs to create a snapshot ID of the image, which must contain a system disk snapshot ID
 	// Can be default: Yes, this parameter cannot be default when creating image based on snapshot
 	SnapshotId string `mapstructure:"snapshot_id" required:"false"`
@@ -15,9 +15,9 @@ type KsyunDiskDevice struct {
 	DataDiskId string `mapstructure:"data_disk_id" required:"false"`
 }
 
-type KsyunDiskDevices struct {
-	SnapshotIds []KsyunDiskDevice `mapstructure:"snapshot_ids" required:"false"`
-	DataDiskIds []KsyunDiskDevice `mapstructure:"data_disk_ids" required:"false"`
+type KsyunKecDiskDevices struct {
+	SnapshotIds []KsyunKecDiskDevice `mapstructure:"snapshot_ids" required:"false"`
+	DataDiskIds []KsyunKecDiskDevice `mapstructure:"data_disk_ids" required:"false"`
 }
 
 type KsyunImageConfig struct {
@@ -30,7 +30,7 @@ type KsyunImageConfig struct {
 	// LocalImage (ebs) or CommonImage (ks3)
 	KsyunImageType string `mapstructure:"image_type" required:"false"`
 
-	KsyunDiskDevices `mapstructure:",squash"`
+	KsyunKecDiskDevices `mapstructure:",squash"`
 }
 
 func (c *KsyunImageConfig) Prepare(ctx *interpolate.Context) []error {

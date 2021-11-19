@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
 type stepCreateKsyunKec struct {
-	KsyunRunConfig *KsyunRunConfig
+	KsyunRunConfig *KsyunKecRunConfig
 	InstanceId     string
 }
 
 func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
-	client := stateBag.Get("client").(*ClientWrapper)
+	client := stateBag.Get("client").(*ClientKecWrapper)
 	chargeTypes := []string{"Daily", "HourlyInstantSettlement"}
 
 	if s.KsyunRunConfig.InstanceName == "" {
@@ -68,9 +69,9 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 		}
 	}
 	//subnetId
-	createInstance["SubnetId"] = s.KsyunRunConfig.SubnetId
-	//SecurityGroupId
-	createInstance["SecurityGroupId"] = s.KsyunRunConfig.SecurityGroupId
+	createInstance["subnetId"] = s.KsyunRunConfig.SubnetId
+	//securityGroupId
+	createInstance["securityGroupId"] = s.KsyunRunConfig.SecurityGroupId
 	//PrivateIpAddress
 	if s.KsyunRunConfig.PrivateIpAddress != "" {
 		createInstance["PrivateIpAddress"] = s.KsyunRunConfig.PrivateIpAddress
@@ -101,7 +102,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 		}
 	}
 	if !checkChargeType {
-		return Halt(stateBag, fmt.Errorf("instance_charge_type not match"), "")
+		return ksyun.Halt(stateBag, fmt.Errorf("instance_charge_type not match"), "")
 	}
 	createInstance["ChargeType"] = s.KsyunRunConfig.InstanceChargeType
 	//SriovNetSupport
@@ -115,17 +116,17 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 	//create
 	createResp, createErr := client.KecClient.RunInstances(&createInstance)
 	if createErr != nil {
-		return Halt(stateBag, createErr, "Error creating new kec instance")
+		return ksyun.Halt(stateBag, createErr, "Error creating new kec instance")
 	}
 	if createResp != nil {
 		//Get data
-		instanceId := getSdkValue(stateBag, "InstancesSet.0.InstanceId", *createResp).(string)
+		instanceId := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceId", *createResp).(string)
 		s.InstanceId = instanceId
 		// wait
 		ui.Say("Waiting Ksyun Kec Instance Active")
 		_, waitErr := client.WaitKecInstanceStatus(stateBag, instanceId, s.KsyunRunConfig.ProjectId, "active")
 		if waitErr != nil {
-			return Halt(stateBag, createErr, fmt.Sprintf("Error Wait new kec instance id %s status active", instanceId))
+			return ksyun.Halt(stateBag, createErr, fmt.Sprintf("Error Wait new kec instance id %s status active", instanceId))
 		}
 		stateBag.Put("InstanceId", instanceId)
 	}
@@ -135,7 +136,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 func (s *stepCreateKsyunKec) Cleanup(stateBag multistep.StateBag) {
 	if s.InstanceId != "" {
 		ui := stateBag.Get("ui").(packersdk.Ui)
-		client := stateBag.Get("client").(*ClientWrapper)
+		client := stateBag.Get("client").(*ClientKecWrapper)
 		ui.Say(fmt.Sprintf("Deleting Kec Instance with Id %s ", s.InstanceId))
 		deleteInstance := make(map[string]interface{})
 		deleteInstance["InstanceId.1"] = s.InstanceId
