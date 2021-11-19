@@ -1,29 +1,25 @@
-package kec
+package ksyun
 
 import (
 	"github.com/KscSDK/ksc-sdk-go/ksc"
 	"github.com/KscSDK/ksc-sdk-go/ksc/utils"
 	"github.com/KscSDK/ksc-sdk-go/service/eip"
-	"github.com/KscSDK/ksc-sdk-go/service/kec"
 	"github.com/KscSDK/ksc-sdk-go/service/sks"
 	"github.com/KscSDK/ksc-sdk-go/service/vpc"
-	ksyun "github.com/kingsoftcloud/packer-plugin-ksyun/builder"
+	"github.com/hashicorp/packer-plugin-sdk/multistep"
 )
 
 type ClientConfig struct {
-	ksyun.AccessConfig `mapstructure:",squash"`
-	client             *ClientWrapper
+	AccessConfig `mapstructure:",squash"`
+	client       *ClientWrapper
 }
 
-func (c *ClientConfig) Client() *ClientWrapper {
+func (c *ClientConfig) Client(stateBag *multistep.BasicStateBag) *ClientWrapper {
 	if c.client != nil {
+		stateBag.Put("ksyun_client", c.client)
 		return c.client
 	}
 	c.client = &ClientWrapper{}
-	c.client.KecClient = kec.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
-		&ksc.Config{Region: &c.KsyunRegion}, &utils.UrlInfo{
-			UseSSL: true,
-		})
 	c.client.SksClient = sks.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
 		&ksc.Config{Region: &c.KsyunRegion}, &utils.UrlInfo{
 			UseSSL: true,
@@ -36,5 +32,6 @@ func (c *ClientConfig) Client() *ClientWrapper {
 		&ksc.Config{Region: &c.KsyunRegion}, &utils.UrlInfo{
 			UseSSL: true,
 		})
+	stateBag.Put("ksyun_client", c.client)
 	return c.client
 }

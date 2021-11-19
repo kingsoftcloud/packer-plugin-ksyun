@@ -11,7 +11,7 @@ type Artifact struct {
 	// BuilderId is the unique ID for the builder that created this ksyun image
 	BuilderIdValue string
 	// ksyun connection for performing API stuff.
-	Client *ClientWrapper
+	Client *ClientKecWrapper
 }
 
 func (k *Artifact) BuilderId() string {

@@ -14,7 +14,7 @@ type stepCheckKsyunSourceImage struct {
 
 func (s *stepCheckKsyunSourceImage) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
-	client := stateBag.Get("client").(*ClientWrapper)
+	client := stateBag.Get("client").(*ClientKecWrapper)
 
 	//query
 	describeImages := make(map[string]interface{})

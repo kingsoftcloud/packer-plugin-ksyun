@@ -14,7 +14,7 @@ type stepCreateKsyunImage struct {
 
 func (s *stepCreateKsyunImage) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
-	client := stateBag.Get("client").(*ClientWrapper)
+	client := stateBag.Get("client").(*ClientKecWrapper)
 	instanceId := stateBag.Get("InstanceId").(string)
 	ui.Say("Creating Ksyun Kec Image ")
 	createImage := make(map[string]interface{})

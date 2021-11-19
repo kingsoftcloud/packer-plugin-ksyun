@@ -15,7 +15,7 @@ type stepCreateKsyunKec struct {
 
 func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
-	client := stateBag.Get("client").(*ClientWrapper)
+	client := stateBag.Get("client").(*ClientKecWrapper)
 	chargeTypes := []string{"Daily", "HourlyInstantSettlement"}
 
 	if s.KsyunRunConfig.InstanceName == "" {
@@ -69,9 +69,9 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 		}
 	}
 	//subnetId
-	createInstance["SubnetId"] = s.KsyunRunConfig.SubnetId
-	//SecurityGroupId
-	createInstance["SecurityGroupId"] = s.KsyunRunConfig.SecurityGroupId
+	createInstance["subnetId"] = s.KsyunRunConfig.SubnetId
+	//securityGroupId
+	createInstance["securityGroupId"] = s.KsyunRunConfig.SecurityGroupId
 	//PrivateIpAddress
 	if s.KsyunRunConfig.PrivateIpAddress != "" {
 		createInstance["PrivateIpAddress"] = s.KsyunRunConfig.PrivateIpAddress
@@ -136,7 +136,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 func (s *stepCreateKsyunKec) Cleanup(stateBag multistep.StateBag) {
 	if s.InstanceId != "" {
 		ui := stateBag.Get("ui").(packersdk.Ui)
-		client := stateBag.Get("client").(*ClientWrapper)
+		client := stateBag.Get("client").(*ClientKecWrapper)
 		ui.Say(fmt.Sprintf("Deleting Kec Instance with Id %s ", s.InstanceId))
 		deleteInstance := make(map[string]interface{})
 		deleteInstance["InstanceId.1"] = s.InstanceId

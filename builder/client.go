@@ -1,35 +1,18 @@
-package kec
+package ksyun
 
 import (
 	"fmt"
 	"github.com/KscSDK/ksc-sdk-go/service/eip"
-	"github.com/KscSDK/ksc-sdk-go/service/kec"
 	"github.com/KscSDK/ksc-sdk-go/service/sks"
 	"github.com/KscSDK/ksc-sdk-go/service/vpc"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 	"time"
 )
-
-type ClientWrapper struct {
-	KecClient *kec.Kec
-	SksClient *sks.Sks
-	EipClient *eip.Eip
-	VpcClient *vpc.Vpc
-}
 
 const (
 	defaultRetryInterval = 5 * time.Second
 	defaultRetryTimes    = 12
 )
-
-const (
-	defaultKecInstanceName = "ksyun_packer_vm"
-	defaultKecInstanceType = "I1.1A"
-	defaultKecSshUserName  = "root"
-	defaultKecChargeType   = "Daily"
-)
-
 const (
 	defaultProjectId = "0"
 )
@@ -39,34 +22,38 @@ const (
 	defaultVpcCidr           = "172.20.0.0/16"
 	defaultSubnetName        = "ksyun_packer_subnet"
 	defaultSubnetCidr        = "172.20.1.0/24"
-	EnableSubnetType         = "Normal"
+	defaultSubnetType        = "Normal"
 	defaultSecurityGroupName = "ksyun_packer_security_group"
 )
 
-const (
-	defaultSSHKeyName = "ksyun_packer_ssh_key"
-)
+type ClientWrapper struct {
+	SksClient *sks.Sks
+	EipClient *eip.Eip
+	VpcClient *vpc.Vpc
+	//KecClient *kec.Kec
+	//EpcClient *epc.Epc
+}
 
 type ProcessRequestResult struct {
-	complete  bool
-	stopRetry bool
+	Complete  bool
+	StopRetry bool
 }
 
 var (
 	RequestResourceSuccess = ProcessRequestResult{
-		complete:  true,
-		stopRetry: true,
+		Complete:  true,
+		StopRetry: true,
 	}
 
 	RequestResourceRetry = ProcessRequestResult{
-		complete:  false,
-		stopRetry: false,
+		Complete:  false,
+		StopRetry: false,
 	}
 
-	RequestResourceStop = ProcessRequestResult{
-		complete:  false,
-		stopRetry: true,
-	}
+	//RequestResourceStop = ProcessRequestResult{
+	//	Complete:  false,
+	//	StopRetry: true,
+	//}
 )
 
 type WaitResourceParam struct {
@@ -99,10 +86,10 @@ func (c *ClientWrapper) WaitResource(param *WaitResourceParam) (*map[string]inte
 		lastError = err
 
 		processRequestResult := param.ProcessRequest(lastResponse, lastError)
-		if processRequestResult.complete {
+		if processRequestResult.Complete {
 			return response, nil
 		}
-		if processRequestResult.stopRetry {
+		if processRequestResult.StopRetry {
 			return response, err
 		}
 
@@ -117,59 +104,6 @@ func (c *ClientWrapper) WaitResource(param *WaitResourceParam) (*map[string]inte
 		param.RetryTimes, int(param.RetryInterval.Seconds()), lastError)
 }
 
-func (c *ClientWrapper) WaitKecInstanceStatus(stateBag multistep.StateBag, instanceId string, projectId string, status string) (*map[string]interface{}, error) {
-	return c.WaitResource(&WaitResourceParam{
-		RequestResource: func() (*map[string]interface{}, error) {
-			queryKec := make(map[string]interface{})
-			queryKec["InstanceId.1"] = instanceId
-			queryKec["ProjectId.1"] = projectId
-			return c.KecClient.DescribeInstances(&queryKec)
-		},
-		ProcessRequest: func(resp *map[string]interface{}, err error) ProcessRequestResult {
-			if err != nil {
-				return RequestResourceRetry
-			}
-			kecId := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceId", *resp)
-			if kecId == nil {
-				return RequestResourceRetry
-			}
-			kecState := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceState.Name", *resp).(string)
-			if kecState == status {
-				return RequestResourceSuccess
-			}
-			return RequestResourceRetry
-		},
-		RetryInterval: 10 * time.Second,
-		RetryTimes:    360,
-	})
-}
-
-func (c *ClientWrapper) WaitKecImageStatus(stateBag multistep.StateBag, imageId string, status string) (*map[string]interface{}, error) {
-	return c.WaitResource(&WaitResourceParam{
-		RequestResource: func() (*map[string]interface{}, error) {
-			queryImage := make(map[string]interface{})
-			queryImage["ImageId"] = imageId
-			return c.KecClient.DescribeImages(&queryImage)
-		},
-		ProcessRequest: func(resp *map[string]interface{}, err error) ProcessRequestResult {
-			if err != nil {
-				return RequestResourceRetry
-			}
-			id := ksyun.GetSdkValue(stateBag, "ImagesSet.0.ImageId", *resp)
-			if id == nil {
-				return RequestResourceRetry
-			}
-			state := ksyun.GetSdkValue(stateBag, "ImagesSet.0.ImageState", *resp).(string)
-			if state == status {
-				return RequestResourceSuccess
-			}
-			return RequestResourceRetry
-		},
-		RetryInterval: 30 * time.Second,
-		RetryTimes:    360,
-	})
-}
-
 func (c *ClientWrapper) WaitSecurityGroupClean(stateBag multistep.StateBag, securityGroupId string) (*map[string]interface{}, error) {
 	return c.WaitResource(&WaitResourceParam{
 		RequestResource: func() (*map[string]interface{}, error) {
@@ -182,7 +116,7 @@ func (c *ClientWrapper) WaitSecurityGroupClean(stateBag multistep.StateBag, secu
 			if err != nil {
 				return RequestResourceRetry
 			}
-			networkInterfaces := ksyun.GetSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
+			networkInterfaces := GetSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
 			if len(networkInterfaces) == 0 {
 				return RequestResourceSuccess
 			}
@@ -205,7 +139,7 @@ func (c *ClientWrapper) WaitSubnetClean(stateBag multistep.StateBag, subnetId st
 			if err != nil {
 				return RequestResourceRetry
 			}
-			networkInterfaces := ksyun.GetSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
+			networkInterfaces := GetSdkValue(stateBag, "NetworkInterfaceSet", *resp).([]interface{})
 			if len(networkInterfaces) == 0 {
 				return RequestResourceSuccess
 			}

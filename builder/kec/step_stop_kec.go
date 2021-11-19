@@ -13,7 +13,7 @@ type stepStopKsyunKec struct {
 
 func (s *stepStopKsyunKec) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
-	client := stateBag.Get("client").(*ClientWrapper)
+	client := stateBag.Get("client").(*ClientKecWrapper)
 	instanceId := stateBag.Get("InstanceId").(string)
 
 	ui.Say("Stopping Ksyun Kec Instance ")
