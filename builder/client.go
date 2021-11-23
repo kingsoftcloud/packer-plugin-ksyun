@@ -20,18 +20,15 @@ const (
 const (
 	defaultVpcName           = "ksyun_packer_vpc"
 	defaultVpcCidr           = "172.20.0.0/16"
-	defaultSubnetName        = "ksyun_packer_subnet"
-	defaultSubnetCidr        = "172.20.1.0/24"
-	defaultSubnetType        = "Normal"
-	defaultSecurityGroupName = "ksyun_packer_security_group"
+	defaultSubnetName        = "ksyun_packer_subnet_index"
+	defaultSubnetCidr        = "172.20.index.0/24"
+	defaultSecurityGroupName = "ksyun_packer_security_group_index"
 )
 
 type ClientWrapper struct {
 	SksClient *sks.Sks
 	EipClient *eip.Eip
 	VpcClient *vpc.Vpc
-	//KecClient *kec.Kec
-	//EpcClient *epc.Epc
 }
 
 type ProcessRequestResult struct {

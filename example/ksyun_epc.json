@@ -1,0 +1,26 @@
+{
+  "variables": {
+    "access_key": "{{ env `KSYUN_ACCESS_KEY` }}",
+    "secret_key": "{{ env `KSYUN_SECRET_KEY` }}"
+  },
+  "builders": [{
+    "type":"ksyun-epc",
+    "access_key":"{{user `access_key`}}",
+    "secret_key":"{{user `secret_key`}}",
+    "region":"cn-beijing-6",
+    "source_image_id":"eb8c0428-476e-49af-8ccb-9fad2455a54c",
+    "host_type":"EC-I-III-II",
+    "availability_zone":"cn-beijing-6c",
+    "raid": "Raid1",
+    "ssh_username":"root",
+    "ssh_clear_authorized_keys": true,
+    "associate_public_ip_address": true
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sleep 30",
+      "yum install mysql -y"
+    ]
+  }]
+}

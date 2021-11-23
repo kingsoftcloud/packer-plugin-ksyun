@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+type AfterStepRun func()
+
 func SSHHost(c communicator.Config) func(multistep.StateBag) (string, error) {
 	return func(stateBag multistep.StateBag) (string, error) {
 		publicIp := stateBag.Get("publicIp").(string)
@@ -109,4 +111,13 @@ func GetIpSegRange(userSegIp, offset uint8) (int, int) {
 	segMinIp := netSegIp & userSegIp
 	segMaxIp := userSegIp&(255<<offset) | ^(255 << offset)
 	return int(segMinIp), int(segMaxIp)
+}
+
+func StringInSlice(v string, valid []string, ignoreCase bool) bool {
+	for _, str := range valid {
+		if v == str || (ignoreCase && strings.ToLower(v) == strings.ToLower(str)) {
+			return true
+		}
+	}
+	return false
 }

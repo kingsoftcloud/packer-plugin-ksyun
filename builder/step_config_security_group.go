@@ -5,29 +5,36 @@ import (
 	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"strconv"
+	"strings"
 )
 
 type StepConfigKsyunSecurityGroup struct {
 	CommonConfig    *CommonConfig
 	securityGroupId string
+	Index           int
+	After           AfterStepRun
 }
 
 func (s *StepConfigKsyunSecurityGroup) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
-
+	defer func() {
+		if s.After != nil {
+			s.After()
+		}
+	}()
 	ui := stateBag.Get("ui").(packersdk.Ui)
 	client := stateBag.Get("ksyun_client").(*ClientWrapper)
-
 	if s.CommonConfig.SecurityGroupId != "" {
 		//Check_security_group
 		querySecurityGroup := make(map[string]interface{})
-		querySecurityGroup["securityGroupId.1"] = s.CommonConfig.SecurityGroupId
+		querySecurityGroup["SecurityGroupId.1"] = s.CommonConfig.SecurityGroupId
 		resp, err := client.VpcClient.DescribeSubnets(&querySecurityGroup)
 		if err != nil {
 			return Halt(stateBag, err, fmt.Sprintf("Error query SecurityGroup with id %s",
 				s.CommonConfig.SecurityGroupId))
 		}
 		if resp != nil {
-			securityGroupId := GetSdkValue(stateBag, "SecurityGroupSet.0.securityGroupId", *resp)
+			securityGroupId := GetSdkValue(stateBag, "SecurityGroupSet.0.SecurityGroupId", *resp)
 			securityGroupName := GetSdkValue(stateBag, "SecurityGroupSet.0.SecurityGroupName", *resp)
 			vpcId := GetSdkValue(stateBag, "SecurityGroupSet.0.VpcId", *resp)
 			if securityGroupId == nil {
@@ -47,7 +54,7 @@ func (s *StepConfigKsyunSecurityGroup) Run(ctx context.Context, stateBag multist
 	} else {
 		//create_security_group
 		if s.CommonConfig.SecurityGroupName == "" {
-			s.CommonConfig.SecurityGroupName = defaultSecurityGroupName
+			s.CommonConfig.SecurityGroupName = strings.Replace(defaultSecurityGroupName, "index", strconv.Itoa(s.Index+1), -1)
 		}
 		ui.Say(fmt.Sprintf("Creating new SecurityGroup with name  %s vpcId %s",
 			s.CommonConfig.SecurityGroupName, s.CommonConfig.VpcId))
