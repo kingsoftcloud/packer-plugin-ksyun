@@ -1,25 +1,25 @@
-package kec
+package epc
 
 import (
 	"github.com/KscSDK/ksc-sdk-go/ksc"
 	"github.com/KscSDK/ksc-sdk-go/ksc/utils"
-	"github.com/KscSDK/ksc-sdk-go/service/kec"
+	"github.com/KscSDK/ksc-sdk-go/service/epc"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	ksyun "github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
-type ClientKecConfig struct {
+type ClientEpcConfig struct {
 	ksyun.ClientConfig `mapstructure:",squash"`
-	client             *ClientKecWrapper
+	client             *ClientEpcWrapper
 }
 
-func (c *ClientKecConfig) KecClient(stateBag *multistep.BasicStateBag) *ClientKecWrapper {
+func (c *ClientEpcConfig) EpcClient(stateBag *multistep.BasicStateBag) *ClientEpcWrapper {
 	if c.client != nil {
 		return c.client
 	}
-	c.client = &ClientKecWrapper{
+	c.client = &ClientEpcWrapper{
 		ClientWrapper: c.Client(stateBag),
-		KecClient: kec.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
+		EpcClient: epc.SdkNew(ksc.NewClient(c.KsyunAccessKey, c.KsyunSecretKey),
 			&ksc.Config{Region: &c.KsyunRegion},
 			&utils.UrlInfo{
 				UseSSL: true,

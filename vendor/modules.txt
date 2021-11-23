@@ -32,6 +32,7 @@ github.com/KscSDK/ksc-sdk-go/ksc/kscbody
 github.com/KscSDK/ksc-sdk-go/ksc/kscquery
 github.com/KscSDK/ksc-sdk-go/ksc/utils
 github.com/KscSDK/ksc-sdk-go/service/eip
+github.com/KscSDK/ksc-sdk-go/service/epc
 github.com/KscSDK/ksc-sdk-go/service/kec
 github.com/KscSDK/ksc-sdk-go/service/sks
 github.com/KscSDK/ksc-sdk-go/service/vpc
