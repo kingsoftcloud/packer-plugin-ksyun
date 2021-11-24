@@ -2,6 +2,7 @@
 /local
 /pkg
 /src
+/vendor
 /website/.sass-cache
 /website/build
 /website/tmp
