@@ -1,4 +1,4 @@
-package kec
+package epc
 
 import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -8,7 +8,7 @@ import (
 type Artifact struct {
 	*ksyun.Artifact
 	// ksyun connection for performing API stuff.
-	Client *ClientKecWrapper
+	Client *ClientEpcWrapper
 }
 
 func (k *Artifact) Destroy() error {

@@ -14,6 +14,8 @@ type CommonConfig struct {
 	//the default value is packer_subnet
 	SubnetName string `mapstructure:"subnet_name" required:"false"`
 	// 172.16.0.0/24. When not specified, the default value is 172.16.0.0/24.
+	DNS1            string `mapstructure:"dns1" required:"false"`
+	DNS2            string `mapstructure:"dns2" required:"false"`
 	SubnetCidrBlock string `mapstructure:"subnet_cidr_block" required:"false"`
 	// availability_zone
 	AvailabilityZone string `mapstructure:"availability_zone" required:"false"`

@@ -10,9 +10,15 @@ import (
 type StepConfigKsyunVpc struct {
 	CommonConfig *CommonConfig
 	vpcId        string
+	After        AfterStepRun
 }
 
 func (s *StepConfigKsyunVpc) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
+	defer func() {
+		if s.After != nil {
+			s.After()
+		}
+	}()
 	ui := stateBag.Get("ui").(packersdk.Ui)
 	client := stateBag.Get("ksyun_client").(*ClientWrapper)
 
@@ -31,6 +37,7 @@ func (s *StepConfigKsyunVpc) Run(ctx context.Context, stateBag multistep.StateBa
 			}
 		}
 		ui.Say(fmt.Sprintf("Using existing Vpc id is %s", s.CommonConfig.VpcId))
+		stateBag.Put("VpcId", s.CommonConfig.VpcId)
 		return multistep.ActionContinue
 	} else {
 		//create_vpc
