@@ -46,6 +46,7 @@ packer {
 
 ## Usage for Kec
 Here is a sample template, which you can also find in the `example/` directory
+### JSON Template
 ```json
 {
   "variables": {
@@ -72,8 +73,44 @@ Here is a sample template, which you can also find in the `example/` directory
   }]
 }
 ```
+### HCL Template
+
+```hcl
+variable "access_key" {
+  type    = string
+  default = env("KSYUN_ACCESS_KEY")
+}
+
+variable "secret_key" {
+  type    = string
+  default = env("KSYUN_SECRET_KEY")
+}
+
+source "ksyun-kec" "example" {
+  access_key                  = var.access_key
+  secret_key                  = var.secret_key
+  region                      = "cn-shanghai-2"
+  image_name                  = "packer_test"
+  source_image_id             = "IMG-dd1f8324-1f27-46e0-ad6b-b41d8c8ff025"
+  instance_type               = "N3.1B"
+  ssh_username                = "root"
+  associate_public_ip_address = true
+}
+build {
+  provisioners "shell" {
+    inline = [
+      "sleep 30",
+      "yum install mysql -y"
+    ]
+  }
+}
+
+```
 ## Usage for Bare Metal
 Here is a sample template, which you can also find in the `example/` directory
+
+### JSON Template
+
 ```json
 {
   "variables": {
@@ -103,12 +140,61 @@ Here is a sample template, which you can also find in the `example/` directory
 }
 
 ```
+
+### HCL Template
+
+```hcl
+variable "access_key" {
+  type    = string
+  default = env("KSYUN_ACCESS_KEY")
+}
+
+variable "secret_key" {
+  type    = string
+  default = env("KSYUN_SECRET_KEY")
+}
+source "ksyun-kec" "example" {
+  access_key                  = var.access_key
+  secret_key                  = var.secret_key
+  region                      = "cn-beijing-6"
+  source_image_id             = "eb8c0428-476e-49af-8ccb-9fad2455a54c"
+  host_type                   = "EC-I-III-II"
+  availability_zone           = "cn-beijing-6c"
+  raid                        = "Raid1"
+  ssh_username                = "root"
+  ssh_clear_authorized_keys   = true
+  associate_public_ip_address = true
+}
+build {
+  provisioners "shell" {
+    inline = [
+      "sleep 30",
+      "yum install mysql -y"
+    ]
+  }
+}
+
+```
+
 Enter the API user credentials in your terminal with the following commands. Replace the <AK> and <SK> with your user details.
 ```sh
 export KSYUN_ACCESS_KEY=<AK>
 export KSYUN_SECRET_KEY=<SK>
 ```
 Then run Packer using the example template with the command underneath.
+
+### HTL Template
+
+```
+# install packer plugin
+packer init .
+# use for kec
+packer build -only="ksyun.*" .
+# use for bare metal
+packer build -only="ksyun_epc.*" .
+```
+
+### JSON Template
 ```
 # use for kec
 packer build example/ksyun.json
