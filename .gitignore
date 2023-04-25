@@ -2,6 +2,7 @@
 /local
 /pkg
 /src
+/vendor
 /website/.sass-cache
 /website/build
 /website/tmp
@@ -15,6 +16,7 @@ test/.env
 
 website/.bundle
 website/vendor
+
 
 packer-test*.log
 
