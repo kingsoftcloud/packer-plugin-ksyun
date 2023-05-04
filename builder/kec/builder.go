@@ -1,4 +1,4 @@
-//go:generate mapstructure-to-hcl2 -type Config,KsyunKecDiskDevice,KsyunEbsDataDisk
+//go:generate packer-sdc mapstructure-to-hcl2 -type Config,KsyunKecDiskDevice,KsyunEbsDataDisk
 
 // The ksyun  contains a packersdk.Builder implementation that
 // builds ecs images for ksyun.

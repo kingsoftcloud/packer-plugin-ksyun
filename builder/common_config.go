@@ -1,3 +1,5 @@
+//go:generate packer-sdc struct-markdown
+
 package ksyun
 
 import "github.com/hashicorp/packer-plugin-sdk/communicator"

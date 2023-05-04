@@ -34,7 +34,10 @@ func Halt(stateBag multistep.StateBag, err error, prefix string) multistep.StepA
 func GetSdkValue(stateBag multistep.StateBag, keyPattern string, obj interface{}) interface{} {
 	keys := strings.Split(keyPattern, ".")
 	root := obj
+	//log.Println(obj, 23)
+	//log.Println("GetSdkValue keyPattern:", keyPattern)
 	for index, k := range keys {
+		//log.Println("GetSdkValue key:", k)
 		if reflect.ValueOf(root).Kind() == reflect.Map {
 			root = root.(map[string]interface{})[k]
 			if root == nil {
@@ -87,7 +90,10 @@ func GetCidrIpMask(maskLen int) string {
 	cidrMaskSeg3 := uint8(cidrMask >> 8)
 	cidrMaskSeg4 := uint8(cidrMask & uint32(255))
 
-	return fmt.Sprint(cidrMaskSeg1) + "." + fmt.Sprint(cidrMaskSeg2) + "." + fmt.Sprint(cidrMaskSeg3) + "." + fmt.Sprint(cidrMaskSeg4)
+	return fmt.Sprint(cidrMaskSeg1) + "." +
+		fmt.Sprint(cidrMaskSeg2) + "." +
+		fmt.Sprint(cidrMaskSeg3) + "." +
+		fmt.Sprint(cidrMaskSeg4)
 }
 
 func GetIpSeg3Range(ipSegs []string, maskLen int) (int, int) {
