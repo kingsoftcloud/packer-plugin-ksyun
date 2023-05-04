@@ -3,9 +3,10 @@
 set -e
 
 version=$1
-GROUP=$2
-SHORT_NAME=$3
-PLUGIN_NAME=$4
+
+GROUP=kingsoftcloud
+SHORT_NAME=ksyun
+PLUGIN_NAME=packer-plugin-${SHORT_NAME}
 
 # Detech current os category
 unameOut="$(uname -s)"
@@ -30,7 +31,7 @@ echo "Compiling ..."
 
 plugin_path=$HOME/.packer.d/plugins/github.com/${GROUP}/${SHORT_NAME}
 
-echo $plugin_path
+echo $plugin_path/$FULL_PLUGIN_NAME
 
 if [ $OS_TYPE == "linux" -o $OS_TYPE == "darwin" ]; then
 	GOOS=$OS_TYPE GOARCH=$OS_ARCH go build -ldflags "-X main.version=$version" -o bin/${PLUGIN_NAME}
@@ -41,9 +42,8 @@ if [ $OS_TYPE == "linux" -o $OS_TYPE == "darwin" ]; then
 elif [ $OS_TYPE == "Windows" ]; then
 	GOOS=$OS_TYPE GOARCH=$OS_ARCH  go build -ldflags "-X main.version=$version" -o bin/${PLUGIN_NAME}
 	chmod +x bin/${PLUGIN_NAME}.exe
-#    mkdir -p $APPDATA/terraform.d/plugins
     mkdir -p $plugin_path_win
-    mv bin/${PLUGIN_NAME}.exe $plugin_path_win/terraform-provider-ksyun_v${version}.exe
+    mv bin/${PLUGIN_NAME}.exe $plugin_path_win/${PLUGIN_NAME}.exe
 else
     echo "Invalid OS"
     exit 1
