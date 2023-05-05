@@ -23,6 +23,7 @@ type FlatConfig struct {
 	KsyunRegion               *string                  `mapstructure:"region" required:"true" cty:"region" hcl:"region"`
 	KsyunImageName            *string                  `mapstructure:"image_name" required:"true" cty:"image_name" hcl:"image_name"`
 	KsyunImageType            *string                  `mapstructure:"image_type" required:"false" cty:"image_type" hcl:"image_type"`
+	KsyunImageIgnoreDataDisks *bool                    `mapstructure:"image_ignore_data_disks" required:"false" cty:"image_ignore_data_disks" hcl:"image_ignore_data_disks"`
 	SnapshotIds               []FlatKsyunKecDiskDevice `mapstructure:"snapshot_ids" required:"false" cty:"snapshot_ids" hcl:"snapshot_ids"`
 	DataDiskIds               []FlatKsyunKecDiskDevice `mapstructure:"data_disk_ids" required:"false" cty:"data_disk_ids" hcl:"data_disk_ids"`
 	InstanceType              *string                  `mapstructure:"instance_type" required:"true" cty:"instance_type" hcl:"instance_type"`
@@ -128,6 +129,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"region":                       &hcldec.AttrSpec{Name: "region", Type: cty.String, Required: false},
 		"image_name":                   &hcldec.AttrSpec{Name: "image_name", Type: cty.String, Required: false},
 		"image_type":                   &hcldec.AttrSpec{Name: "image_type", Type: cty.String, Required: false},
+		"image_ignore_data_disks":      &hcldec.AttrSpec{Name: "image_ignore_data_disks", Type: cty.Bool, Required: false},
 		"snapshot_ids":                 &hcldec.BlockListSpec{TypeName: "snapshot_ids", Nested: hcldec.ObjectSpec((*FlatKsyunKecDiskDevice)(nil).HCL2Spec())},
 		"data_disk_ids":                &hcldec.BlockListSpec{TypeName: "data_disk_ids", Nested: hcldec.ObjectSpec((*FlatKsyunKecDiskDevice)(nil).HCL2Spec())},
 		"instance_type":                &hcldec.AttrSpec{Name: "instance_type", Type: cty.String, Required: false},

@@ -3,7 +3,7 @@
 This is a [HashiCorp Packer](https://www.packer.io/) plugin for creating [Kingsoft Cloud KEC & BareMetal](https://www.ksyun.com/nv/product/KEC.html) image.
 
 ## Requirements
-* [Go 1.14+](https://golang.org/doc/install)
+* [Go 1.19+](https://golang.org/doc/install)
 * [Packer](https://www.packer.io/intro/getting-started/install.html)
 
 ## Build & Installation
