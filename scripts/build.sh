@@ -25,7 +25,7 @@ case "${unameOut}" in
     *)          OS_ARCH="UNKNOWN:${unameOut}"
 esac
 
-FULL_PLUGIN_NAME=${PLUGIN_NAME}_${version}_x5.0_${OS_TYPE}_${OS_ARCH}
+FULL_PLUGIN_NAME=${PLUGIN_NAME}_v${version}_x5.0_${OS_TYPE}_${OS_ARCH}
 echo "${FULL_PLUGIN_NAME} is deteched."
 echo "Compiling ..."
 
