@@ -3,7 +3,7 @@
 Please refer to [releases](https://github.com/kingsoftcloud/packer-plugin-ksyun/releases) for the latest CHANGELOG information.
 
 ---
-## 0.0.12 (Upcoming)
+## 0.0.11 (Upcoming)
 
 ### FEATURES
 * Support creating kec image include all snapshots of data disks
