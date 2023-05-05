@@ -2,9 +2,12 @@ package kec
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
+	"log"
+	"reflect"
 )
 
 type stepCreateKsyunImage struct {
@@ -20,9 +23,24 @@ func (s *stepCreateKsyunImage) Run(ctx context.Context, stateBag multistep.State
 	createImage := make(map[string]interface{})
 	createImage["InstanceId"] = instanceId
 	createImage["Name"] = s.KsyunImageConfig.KsyunImageName
+
 	if s.KsyunImageConfig.KsyunImageType != "" {
 		createImage["Type"] = s.KsyunImageConfig.KsyunImageType
 	}
+
+	// 判断是否创建整机镜像
+	if !s.KsyunImageConfig.KsyunImageIgnoreDataDisks {
+		dataDisksSrc := reflect.ValueOf(stateBag.Get("DataDisks"))
+		if dataDisksSrc.Kind() == reflect.Slice && dataDisksSrc.Len() > 0 {
+			for i := 0; i < dataDisksSrc.Len(); i++ {
+				log.Println("dataDisksSrc:", i)
+				ele := dataDisksSrc.Index(i).Elem()
+				createImage[fmt.Sprintf("DataDiskIds.%d", i+1)] = ele.MapIndex(reflect.ValueOf("DiskId")).Elem().String()
+			}
+		}
+	}
+	log.Println("createImage:", createImage)
+
 	resp, errorCreate := client.KecClient.CreateImage(&createImage)
 	if errorCreate != nil {
 		return ksyun.Halt(stateBag, errorCreate, "Error creating  kec image")

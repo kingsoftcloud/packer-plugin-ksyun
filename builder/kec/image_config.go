@@ -30,6 +30,10 @@ type KsyunImageConfig struct {
 	// LocalImage (ebs) or CommonImage (ks3)
 	KsyunImageType string `mapstructure:"image_type" required:"false"`
 
+	// If this value is true, the image created will not include any snapshot
+	// of data disks. The default value is false.
+	KsyunImageIgnoreDataDisks bool `mapstructure:"image_ignore_data_disks" required:"false"`
+
 	KsyunKecDiskDevices `mapstructure:",squash"`
 }
 

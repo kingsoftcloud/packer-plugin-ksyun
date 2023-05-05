@@ -65,8 +65,9 @@ func (s *StepConfigKsyunSubnet) Run(ctx context.Context, stateBag multistep.Stat
 			s.CommonConfig.SubnetCidrBlock = strings.Replace(defaultSubnetCidr, "index", strconv.Itoa(s.Index+1), -1)
 		}
 		startIp, minIp, maxIp := GetCidrIpRange(s.CommonConfig.SubnetCidrBlock)
-		ui.Say(fmt.Sprintf("Creating new Subnet with name  %s cidr %s vpcId %s",
-			s.CommonConfig.SubnetName, s.CommonConfig.SubnetCidrBlock, s.CommonConfig.VpcId))
+		ui.Say(fmt.Sprintf("Creating new Subnet with name  %s cidr %s vpcId %s type %s",
+			s.CommonConfig.SubnetName, s.CommonConfig.SubnetCidrBlock, s.CommonConfig.VpcId,
+			s.SubnetType))
 		createSubnet := make(map[string]interface{})
 		createSubnet["VpcId"] = s.CommonConfig.VpcId
 		createSubnet["SubnetName"] = s.CommonConfig.SubnetName

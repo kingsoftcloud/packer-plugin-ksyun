@@ -1,3 +1,4 @@
+//go:generate packer-sdc struct-markdown
 package epc
 
 import (

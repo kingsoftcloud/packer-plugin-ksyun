@@ -42,6 +42,13 @@ func (c *ClientKecWrapper) WaitKecInstanceStatus(stateBag multistep.StateBag, in
 					stateBag.Put("PrivateIp", privateIp)
 				}
 
+				if stateBag.Get("DataDisks") == nil {
+					dataDisksSrc := ksyun.GetSdkValue(stateBag, "InstancesSet.0.DataDisks", *resp)
+					if dataDisksSrc != nil {
+						stateBag.Put("DataDisks", dataDisksSrc)
+					}
+				}
+
 				return ksyun.RequestResourceSuccess
 			}
 			return ksyun.RequestResourceRetry

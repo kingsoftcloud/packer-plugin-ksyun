@@ -121,6 +121,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 	if createResp != nil {
 		//Get data
 		instanceId := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceId", *createResp).(string)
+
 		s.InstanceId = instanceId
 		// wait
 		ui.Say("Waiting Ksyun Kec Instance Active")

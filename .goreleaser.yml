@@ -3,6 +3,7 @@
 before:
   hooks:
     # this is just an example and not a requirement for provider building/publishing
+    - go mod tidy
     - go mod vendor
 builds:
   - env:
@@ -28,6 +29,8 @@ builds:
     ignore:
       - goos: darwin
         goarch: '386'
+      - goos: windows
+        goarch: arm64
     binary: '{{ .ProjectName }}_v{{ .Version }}_x5.0_{{ .Os }}_{{ .Arch }}'
 archives:
   - format: zip
