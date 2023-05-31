@@ -35,6 +35,9 @@ type KsyunImageConfig struct {
 	KsyunImageIgnoreDataDisks bool `mapstructure:"image_ignore_data_disks" required:"false"`
 
 	KsyunKecDiskDevices `mapstructure:",squash"`
+
+	KsyunImageCopyRegions []string `mapstructure:"image_copy_regions" required:"false"`
+	KsyunImageCopyNames   []string `mapstructure:"image_copy_names" required:"false"`
 }
 
 func (c *KsyunImageConfig) Prepare(ctx *interpolate.Context) []error {

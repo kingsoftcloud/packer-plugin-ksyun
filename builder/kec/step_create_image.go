@@ -53,8 +53,51 @@ func (s *stepCreateKsyunImage) Run(ctx context.Context, stateBag multistep.State
 			return ksyun.Halt(stateBag, err, "Error waiting  kec image active")
 		}
 		stateBag.Put("TargetImageId", imageId)
+
+		// copy image
+		err = s.ImageCopy(imageId, stateBag)
+		if err != nil {
+			return ksyun.Halt(stateBag, err, "Error copying kec image")
+		}
 	}
+
 	return multistep.ActionContinue
+}
+
+func (s *stepCreateKsyunImage) ImageCopy(imageId string, stateBag multistep.StateBag) error {
+	regions := s.KsyunImageConfig.KsyunImageCopyRegions
+
+	if len(regions) == 0 {
+		return nil
+	}
+
+	names := s.KsyunImageConfig.KsyunImageCopyNames
+	ui := stateBag.Get("ui").(packersdk.Ui)
+
+	client := stateBag.Get("client").(*ClientKecWrapper)
+	for idx, region := range regions {
+		name := ""
+		if idx < len(names) {
+			name = names[idx]
+		}
+		params := map[string]interface{}{
+			"ImageId.1":           imageId,
+			"DestinationRegion.1": region,
+		}
+		if name != "" {
+			params["DestinationImageName"] = name
+		}
+		// 目前返回值没有新镜像的id，不能查进度
+		_, err := client.KecClient.CopyImage(&params)
+		if err != nil {
+			return err
+			//return ksyun.Halt(stateBag, err, "error copying images")
+		}
+		ui.Message(fmt.Sprintf("copy image to %s", region))
+
+	}
+	return nil
+
 }
 
 func (s *stepCreateKsyunImage) Cleanup(stateBag multistep.StateBag) {
