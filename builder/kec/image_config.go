@@ -36,6 +36,7 @@ type KsyunImageConfig struct {
 
 	KsyunKecDiskDevices `mapstructure:",squash"`
 
+	// Copy to the regions.
 	KsyunImageCopyRegions []string `mapstructure:"image_copy_regions" required:"false"`
 	KsyunImageCopyNames   []string `mapstructure:"image_copy_names" required:"false"`
 }
