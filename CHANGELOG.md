@@ -7,7 +7,7 @@ Please refer to [releases](https://github.com/kingsoftcloud/packer-plugin-ksyun/
 
 ### FEATURES
 
-* Support `image_copy_regions` and `image_copy_names`, copying a custom image helps you quickly deploy the operating environment of the current KEC instance to another region. You can copy up to 10 images at a time.
+* Support `image_copy_regions` and `image_copy_names`, copying a custom image helps you quickly deploy the operating environment of the current KEC instance to another region.
 
 
 ## 0.0.11 (May 5, 2023)
