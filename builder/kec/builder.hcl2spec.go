@@ -26,6 +26,8 @@ type FlatConfig struct {
 	KsyunImageIgnoreDataDisks *bool                    `mapstructure:"image_ignore_data_disks" required:"false" cty:"image_ignore_data_disks" hcl:"image_ignore_data_disks"`
 	SnapshotIds               []FlatKsyunKecDiskDevice `mapstructure:"snapshot_ids" required:"false" cty:"snapshot_ids" hcl:"snapshot_ids"`
 	DataDiskIds               []FlatKsyunKecDiskDevice `mapstructure:"data_disk_ids" required:"false" cty:"data_disk_ids" hcl:"data_disk_ids"`
+	KsyunImageCopyRegions     []string                 `mapstructure:"image_copy_regions" required:"false" cty:"image_copy_regions" hcl:"image_copy_regions"`
+	KsyunImageCopyNames       []string                 `mapstructure:"image_copy_names" required:"false" cty:"image_copy_names" hcl:"image_copy_names"`
 	InstanceType              *string                  `mapstructure:"instance_type" required:"true" cty:"instance_type" hcl:"instance_type"`
 	SourceImageId             *string                  `mapstructure:"source_image_id" required:"true" cty:"source_image_id" hcl:"source_image_id"`
 	SystemDiskType            *string                  `mapstructure:"system_disk_type" required:"false" cty:"system_disk_type" hcl:"system_disk_type"`
@@ -132,6 +134,8 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"image_ignore_data_disks":      &hcldec.AttrSpec{Name: "image_ignore_data_disks", Type: cty.Bool, Required: false},
 		"snapshot_ids":                 &hcldec.BlockListSpec{TypeName: "snapshot_ids", Nested: hcldec.ObjectSpec((*FlatKsyunKecDiskDevice)(nil).HCL2Spec())},
 		"data_disk_ids":                &hcldec.BlockListSpec{TypeName: "data_disk_ids", Nested: hcldec.ObjectSpec((*FlatKsyunKecDiskDevice)(nil).HCL2Spec())},
+		"image_copy_regions":           &hcldec.AttrSpec{Name: "image_copy_regions", Type: cty.List(cty.String), Required: false},
+		"image_copy_names":             &hcldec.AttrSpec{Name: "image_copy_names", Type: cty.List(cty.String), Required: false},
 		"instance_type":                &hcldec.AttrSpec{Name: "instance_type", Type: cty.String, Required: false},
 		"source_image_id":              &hcldec.AttrSpec{Name: "source_image_id", Type: cty.String, Required: false},
 		"system_disk_type":             &hcldec.AttrSpec{Name: "system_disk_type", Type: cty.String, Required: false},
