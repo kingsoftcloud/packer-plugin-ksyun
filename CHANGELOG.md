@@ -15,3 +15,4 @@ Please refer to [releases](https://github.com/kingsoftcloud/packer-plugin-ksyun/
 ### FEATURES
 * Support creating kec image include all snapshots of data disks
 * Support `image_ignore_data_disks`, if the value is true, the key image created will not include any snapshot of data disks.
+* update packer-plugin-sdk version: 0.0.14 -> v0.4.0
