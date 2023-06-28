@@ -35,7 +35,7 @@ source "ksyun-kec" "test" {
   ssh_clear_authorized_keys = true
 
   # 此参数为true时，data_disks的硬盘不会打快照加入镜像
-  # image_ignore_data_disks = true
+   image_ignore_data_disks = true
 
   data_disks {
     data_disk_type = "SSD3.0"
@@ -48,6 +48,11 @@ source "ksyun-kec" "test" {
   # 镜像复制后的名称, 不命名则使用原镜像的名称
   image_copy_names = ["copy-test"]
 
+  # 开启镜像预热
+  image_warm_up = true
+
+  # 镜像共享给其他用户
+  image_share_accounts = ["xxxxxxxx", "xxxxxxxx"]
 }
 
 build {
