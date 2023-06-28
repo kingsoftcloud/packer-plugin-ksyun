@@ -3,7 +3,7 @@ module github.com/kingsoftcloud/packer-plugin-ksyun
 go 1.19
 
 require (
-	github.com/KscSDK/ksc-sdk-go v0.1.47
+	github.com/KscSDK/ksc-sdk-go v0.2.3
 	github.com/hashicorp/hcl/v2 v2.13.0
 	github.com/hashicorp/packer-plugin-sdk v0.4.0
 	github.com/zclconf/go-cty v1.10.0

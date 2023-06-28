@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"time"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -149,16 +150,24 @@ func (s *stepCreateKsyunImage) ImageShare(imageId string, stateBag multistep.Sta
 // ImageWarmup set this image start to warmup-start
 func (s *stepCreateKsyunImage) ImageWarmup(imageId string, stateBag multistep.StateBag) error {
 	ui := stateBag.Get("ui").(packersdk.Ui)
-
 	client := stateBag.Get("client").(*ClientKecWrapper)
+
+	if _, err := client.WaitKecImageStatus(stateBag, imageId, "active"); err != nil {
+		return err
+	}
+
 	params := map[string]interface{}{
 		"ImageId.1": imageId,
 	}
 
+	// EnableImageCaching is an async call, so we have to wait its state changed
 	if _, err := client.KecClient.EnableImageCaching(&params); err != nil {
 		return err
 	}
-	ui.Say("Waiting image warming up")
+	// ui.Say("Waiting image warming up")
+	// waiting image warm-up state syncing
+	time.Sleep(10 * time.Second)
+	// TODO: 在action=describeImages中若不添加header: X-KSC-SOURCE=kec 则无法获取到images的warm-up状态
 	if _, err := client.WaitKecImageStatus(stateBag, imageId, "active"); err != nil {
 		return err
 	}

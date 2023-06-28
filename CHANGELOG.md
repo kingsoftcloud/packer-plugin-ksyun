@@ -3,6 +3,12 @@
 Please refer to [releases](https://github.com/kingsoftcloud/packer-plugin-ksyun/releases) for the latest CHANGELOG information.
 
 ---
+## 0.0.13 (Jun 28, 2023)
+
+### FEATURES
+
+* Support `image_share_account` and `image_warm_up`, sharing a custom image to other accounts and support setting the image as warm-up that will accelerate instance boot. 
+
 ## 0.0.12 (May 31, 2023)
 
 ### FEATURES
