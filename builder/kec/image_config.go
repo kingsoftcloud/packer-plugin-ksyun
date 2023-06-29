@@ -2,8 +2,9 @@ package kec
 
 import (
 	"fmt"
-	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"regexp"
+
+	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 )
 
 type KsyunKecDiskDevice struct {
@@ -39,6 +40,12 @@ type KsyunImageConfig struct {
 	// Copy to the regions.
 	KsyunImageCopyRegions []string `mapstructure:"image_copy_regions" required:"false"`
 	KsyunImageCopyNames   []string `mapstructure:"image_copy_names" required:"false"`
+
+	// Share images
+	KsyunImageShareAccounts []string `mapstructure:"image_share_accounts" required:"false"`
+
+	// Image warmup
+	KsyunImageWarmUp bool `mapstructure:"image_warm_up" required:"false"`
 }
 
 func (c *KsyunImageConfig) Prepare(ctx *interpolate.Context) []error {
