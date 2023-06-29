@@ -3,7 +3,7 @@
 Please refer to [releases](https://github.com/kingsoftcloud/packer-plugin-ksyun/releases) for the latest CHANGELOG information.
 
 ---
-## 0.0.13 (Jun 28, 2023)
+## 0.1.0 (Jun 29, 2023)
 
 ### FEATURES
 
