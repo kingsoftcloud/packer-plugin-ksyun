@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     ksyun = {
-      version = "0.0.13"
+      version = ">=0.1.0"
       source  = "github.com/kingsoftcloud/ksyun"
     }
   }
@@ -17,12 +17,21 @@ variable sk {
   default = "${env("KSYUN_SECRET_KEY")}"
 }
 
+data "ksyun-kmi" "foo" {
+  access_key      = var.ak
+  secret_key      = var.sk
+  region          = "cn-shanghai-2"
+#  platform    = "centos-7.5"
+  name_regex="centos-7.0.*"
+  most_recent = true
+}
+
 source "ksyun-kec" "test" {
   access_key      = var.ak
   secret_key      = var.sk
   region          = "cn-shanghai-2"
   image_name      = "packer_test"
-  source_image_id = "IMG-12112384-c3d3-4d42-8882-58234825ba1c"
+  source_image_id = data.ksyun-kmi.foo.id
   instance_type   = "N3.1B"
   ssh_username    = "root"
 
@@ -52,7 +61,7 @@ source "ksyun-kec" "test" {
   image_warm_up = true
 
   # 镜像共享给其他用户
-  image_share_accounts = ["xxxxxxxx", "xxxxxxxx"]
+#  image_share_accounts = ["xxxxxxxx", "xxxxxxxx"]
 }
 
 build {
