@@ -4,10 +4,11 @@ package kec
 import (
 	"errors"
 	"fmt"
+	"regexp"
+
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
 	ksyun "github.com/kingsoftcloud/packer-plugin-ksyun/builder"
-	"regexp"
 )
 
 type KsyunEbsDataDisk struct {
@@ -20,7 +21,7 @@ type KsyunEbsDataDisk struct {
 }
 
 type KsyunKecRunConfig struct {
-	//Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
+	// Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
 	InstanceType  string `mapstructure:"instance_type" required:"true"`
 	SourceImageId string `mapstructure:"source_image_id" required:"true"`
 	// Local_SSD || SSD3.0 || EHDD

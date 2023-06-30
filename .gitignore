@@ -31,3 +31,4 @@ Thumbs.db
 .project
 cache
 /.vscode/
+go.sum

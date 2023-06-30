@@ -7,6 +7,7 @@ package kec
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer-plugin-sdk/common"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
@@ -74,9 +75,9 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	stateBag.Put("client", client)
 	stateBag.Put("hook", hook)
 	stateBag.Put("ui", ui)
-	//special
+	// special
 	SSHTemporaryPublicKey := ""
-	//step
+	// step
 	var steps []multistep.Step
 	steps = []multistep.Step{
 		&ksyun.StepConfigKsyunCommon{

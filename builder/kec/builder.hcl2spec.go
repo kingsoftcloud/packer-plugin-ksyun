@@ -29,7 +29,7 @@ type FlatConfig struct {
 	KsyunImageCopyRegions     []string                 `mapstructure:"image_copy_regions" required:"false" cty:"image_copy_regions" hcl:"image_copy_regions"`
 	KsyunImageCopyNames       []string                 `mapstructure:"image_copy_names" required:"false" cty:"image_copy_names" hcl:"image_copy_names"`
 	KsyunImageShareAccounts   []string                 `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
-	KsyunImageWarmUp          bool                     `mapstructure:"image_warm_up" required:"false" cty:"image_warm_up" hcl:"image_warm_up"`
+	KsyunImageWarmUp          *bool                    `mapstructure:"image_warm_up" required:"false" cty:"image_warm_up" hcl:"image_warm_up"`
 	InstanceType              *string                  `mapstructure:"instance_type" required:"true" cty:"instance_type" hcl:"instance_type"`
 	SourceImageId             *string                  `mapstructure:"source_image_id" required:"true" cty:"source_image_id" hcl:"source_image_id"`
 	SystemDiskType            *string                  `mapstructure:"system_disk_type" required:"false" cty:"system_disk_type" hcl:"system_disk_type"`
