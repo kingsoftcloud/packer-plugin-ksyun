@@ -25,7 +25,6 @@ type FlatConfig struct {
 	ImageSource         *string           `mapstructure:"image_source" cty:"image_source" hcl:"image_source"`
 	NameRegex           *string           `mapstructure:"name_regex" cty:"name_regex" hcl:"name_regex"`
 	Platform            *string           `mapstructure:"platform" cty:"platform" hcl:"platform"`
-	ImageId             *string           `mapstructure:"image_id" cty:"image_id" hcl:"image_id"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -55,7 +54,6 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"image_source":               &hcldec.AttrSpec{Name: "image_source", Type: cty.String, Required: false},
 		"name_regex":                 &hcldec.AttrSpec{Name: "name_regex", Type: cty.String, Required: false},
 		"platform":                   &hcldec.AttrSpec{Name: "platform", Type: cty.String, Required: false},
-		"image_id":                   &hcldec.AttrSpec{Name: "image_id", Type: cty.String, Required: false},
 	}
 	return s
 }

@@ -18,12 +18,13 @@ variable sk {
 }
 
 data "ksyun-kmi" "foo" {
-  access_key      = var.ak
-  secret_key      = var.sk
-  region          = "cn-shanghai-2"
-#  platform    = "centos-7.5"
-  name_regex="centos-7.0.*"
-  most_recent = true
+  access_key   = var.ak
+  secret_key   = var.sk
+  region       = "cn-shanghai-2"
+  platform     = "centos-7.5"
+  name_regex   = "centos-7.5.*"
+  image_source = "system" // import, copy, share, extend, system.
+  most_recent  = true
 }
 
 source "ksyun-kec" "test" {
@@ -44,7 +45,7 @@ source "ksyun-kec" "test" {
   ssh_clear_authorized_keys = true
 
   # 此参数为true时，data_disks的硬盘不会打快照加入镜像
-   image_ignore_data_disks = true
+  image_ignore_data_disks = true
 
   data_disks {
     data_disk_type = "SSD3.0"
@@ -61,7 +62,7 @@ source "ksyun-kec" "test" {
   image_warm_up = true
 
   # 镜像共享给其他用户
-#  image_share_accounts = ["xxxxxxxx", "xxxxxxxx"]
+  #  image_share_accounts = ["xxxxxxxx", "xxxxxxxx"]
 }
 
 build {

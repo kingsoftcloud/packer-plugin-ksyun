@@ -28,8 +28,7 @@ type Config struct {
 	DatasourceClientConfig `mapstructure:",squash"`
 	ksyun.KmiFilterOptions `mapstructure:",squash"`
 
-	ImageId string `mapstructure:"image_id"`
-	ctx     interpolate.Context
+	ctx interpolate.Context
 }
 
 type DatasourceClientConfig struct {
@@ -92,11 +91,7 @@ func (d *Datasource) Execute() (cty.Value, error) {
 		return cty.Value{}, fmt.Errorf("the current client is nil")
 	}
 	var params *map[string]interface{}
-	if d.config.ImageId != "" {
-		params = &map[string]interface{}{
-			"ImageId": d.config.ImageId,
-		}
-	}
+
 	image, err := d.config.GetFilteredImage(params, kecClient)
 	if err != nil {
 		return cty.NullVal(cty.EmptyObject), err
