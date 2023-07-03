@@ -2,6 +2,7 @@ package ksyun
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"sort"
 	"time"
@@ -102,7 +103,7 @@ func (d *KmiFilterOptions) GetFilteredImage(params *map[string]interface{}, kecC
 	}
 
 	if len(data) < 1 {
-		return image, fmt.Errorf("cannot filter an image with the filter option %v", params)
+		return image, fmt.Errorf("cannot filter an image with the filter option %v and %s", params, d.String())
 	}
 
 	if d.MostRecent {
@@ -111,4 +112,12 @@ func (d *KmiFilterOptions) GetFilteredImage(params *map[string]interface{}, kecC
 		image = data[0]
 	}
 	return image, nil
+}
+
+func (d *KmiFilterOptions) IsEmpty() bool {
+	return reflect.DeepEqual(*d, KmiFilterOptions{})
+}
+
+func (d *KmiFilterOptions) String() string {
+	return fmt.Sprintf("KmiFilterOptions: %+v", *d)
 }
