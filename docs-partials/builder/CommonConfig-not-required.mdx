@@ -1,0 +1,50 @@
+<!-- Code generated from the comments of the CommonConfig struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `vpc_id` (string) - VPC ID allocated by the system.
+
+- `vpc_name` (string) - the default value is packer_vpc
+
+- `vpc_cidr_block` (string) - 172.16.0.0/16. When not specified, the default value is 172.16.0.0/16.
+
+- `subnet_id` (string) - The ID of the Subnet to be used.
+
+- `subnet_name` (string) - the default value is packer_subnet
+
+- `dns1` (string) - 172.16.0.0/24. When not specified, the default value is 172.16.0.0/24.
+
+- `dns2` (string) - DNS 2
+
+- `subnet_cidr_block` (string) - Subnet Cidr Block
+
+- `availability_zone` (string) - availability_zone
+
+- `security_group_id` (string) - ID of the security group to which a newly
+  created instance belongs. Mutual access is allowed between instances in one
+  security group. If not specified, the newly created instance will be added
+  to the default security group. If the default group doesn’t exist, or the
+  number of instances in it has reached the maximum limit, a new security
+  group will be created automatically.
+
+- `security_group_name` (string) - The security group name. The default value
+  is blank. [2, 128] English or Chinese characters, must begin with an
+  uppercase/lowercase letter or Chinese character. Can contain numbers, .,
+  _ or -. It cannot begin with `http://` or `https://`.
+  the default value is packer_security_group
+
+- `private_ip_address` (string) - Private IP address, which specifies any valid value within the range of subnet IP address and represents
+  the primary IP address of the instance. Only one can be selected and bound to the primary network card.
+  If this parameter is not specified, the system will automatically select one from the valid address pool at random
+  Valid values: standard IP address format
+
+- `associate_public_ip_address` (bool) - Associate Public Ip Address
+
+- `public_ip_charge_type` (string) - PublicIp charge type, which can be
+  Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement
+  Default is Daily
+
+- `public_ip_band_width` (int) - [1-100]
+  Default is 1
+
+- `project_id` (string) - Default is 0
+
+<!-- End of code generated from the comments of the CommonConfig struct in builder/common_config.go; -->

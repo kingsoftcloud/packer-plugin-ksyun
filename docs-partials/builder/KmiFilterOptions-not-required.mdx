@@ -1,0 +1,14 @@
+<!-- Code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `most_recent` (bool) - Selects the newest created image when true.
+  This is most useful for selecting a daily distro build.
+
+- `image_source` (string) - ImageSource Valid values are import, copy, share, extend, system.
+
+- `name_regex` (string) - NameRegex A regex string to filter resulting images by name.
+  (Such as: `^CentOS 7.[1-2] 64` means CentOS 7.1 of 64-bit operating system or CentOS 7.2 of 64-bit operating system,
+  \"^Ubuntu 16.04 64\" means Ubuntu 16.04 of 64-bit operating system).
+
+- `platform` (string) - Platform type of the image system.
+
+<!-- End of code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; -->

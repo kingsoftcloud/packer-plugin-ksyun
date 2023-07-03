@@ -1,0 +1,44 @@
+---
+description: |
+The Ksyun KMI data source provides information from a KMI that will be fetched based
+on the filter options provided in the configuration.
+
+page_title: Ksyun KMI - Data Source
+nav_title: Ksyun KMI
+---
+
+# Ksyun KMI Data Source
+
+Type: `ksyun-kmi`
+
+The Ksyun KMI data source will filter and fetch a Ksyun Images, and output all the Ksyun Machine images information that will
+be then available to use in the [Ksyun builders](./).
+
+-> **Note:** Data sources is a feature exclusively available to HCL2 templates.
+
+Basic example of usage:
+
+```hcl
+data "ksyun-kmi" "foo" {
+  access_key   = "ksyun access key"
+  secret_key   = "ksyun secret key"
+  region       = "cn-shanghai-2"
+  platform     = "centos-7.5"
+  name_regex   = "centos-7.5.*"
+  image_source = "system" // import, copy, share, extend, system.
+  most_recent  = true
+}
+```
+This selects the most recent Centos 7.5 Ksyun Images from remote Ksyun. Note that the data source will fail unless
+*exactly* one AMI is returned. In the above example, `most_recent` will cause this to succeed by selecting the newest image.
+
+## Configuration Reference
+
+@include 'builder/KmiFilterOptions-not-required.mdx'
+
+@include 'builder/AccessConfig-required.mdx'
+
+## Output Data
+
+@include 'datasource/kmi/DatasourceOutput.mdx'
+
