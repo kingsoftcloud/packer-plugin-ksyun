@@ -175,3 +175,49 @@ d unless `profile` is set, but it can
 <!-- End of code generated from the comments of the DatasourceOutput struct in datasource/kmi/data.go; -->
 
 
+d unless `profile` is set, but it can
+  also be sourced from the `KSYUN_ACCESS_KEY` environment variable.
+
+- `secret_key` (string) - Ksyun secret key must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_SECRET_KEY` environment variable.
+
+- `region` (string) - Ksyun region must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_REGION` environment variable.
+
+<!-- End of code generated from the comments of the AccessConfig struct in builder/access_config.go; -->
+
+
+### Optional:
+<!-- Code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `most_recent` (bool) - Selects the newest created image when true.
+  This is most useful for selecting a daily distro build.
+
+- `image_source` (string) - ImageSource Valid values are import, copy, share, extend, system.
+
+- `name_regex` (string) - NameRegex A regex string to filter resulting images by name.
+  (Such as: `^CentOS 7.[1-2] 64` means CentOS 7.1 of 64-bit operating system or CentOS 7.2 of 64-bit operating system,
+  \"^Ubuntu 16.04 64\" means Ubuntu 16.04 of 64-bit operating system).
+
+- `platform` (string) - Platform type of the image system.
+
+<!-- End of code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; -->
+
+
+## Output Data
+
+<!-- Code generated from the comments of the DatasourceOutput struct in datasource/kmi/data.go; DO NOT EDIT MANUALLY -->
+
+- `id` (string) - The ID of the image.
+
+- `name` (string) - The name of the image.
+
+- `creation_date` (string) - The date of creation of the image.
+
+- `platform` (string) - Platform
+
+- `image_source` (string) - Image Source
+
+<!-- End of code generated from the comments of the DatasourceOutput struct in datasource/kmi/data.go; -->
+
+
