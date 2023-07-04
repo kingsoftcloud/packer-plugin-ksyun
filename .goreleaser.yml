@@ -5,6 +5,9 @@ before:
     # this is just an example and not a requirement for provider building/publishing
     - go mod tidy
     - go mod vendor
+    # As part of the release doc files are included as a separate deliverable for
+    # consumption by Packer.io. To include a separate docs.zip uncomment the following command.
+    - make ci-release-docs
 builds:
   - env:
       # goreleaser does not work with CGO, it could also complicate
@@ -51,7 +54,11 @@ signs:
       - "--detach-sign"
       - "${artifact}"
 release:
-# If you want to manually examine the release before its live, uncomment this line:
-# draft: true
+  # If you want to manually examine the release before its live, uncomment this line:
+  # draft: true
+  # As part of the release doc files are included as a separate deliverable for consumption by Packer.io.
+  # To include a separate docs.zip uncomment the extra_files config and the docs.zip command hook above.
+  extra_files:
+    - glob: ./docs.zip
 changelog:
   skip: true
