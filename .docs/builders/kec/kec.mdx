@@ -1,0 +1,506 @@
+---
+description: >
+The ksyun-kec Packer builder is able to create Ksyun Images backed by
+
+instance storage as the root device.
+
+page_title: Ksyun Instance(KEC) - Builders
+nav_title: Instance(KEC)
+---
+
+# Ksyun Image Builder (kec)
+
+Type: `ksyun-kec`
+
+The `ksyun-kec` Packer builder is able to create Ksyun Images backed by
+instance storage as the root device.
+
+
+## Configuration Reference
+
+There are many configuration options available for the builder. In addition to
+the items listed here, you will want to look at the general configuration
+references for [Image](#image-configuration),
+[DiskDevices](#disk-devices-configuration),
+[Access](#access-configuration),
+[Run](#run-configuration) and
+[General](#general-configuration)
+configuration references, which are
+necessary for this build to succeed and can be found further down the page.
+
+## Run Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `instance_type` (string) - Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
+
+- `source_image_id` (string) - Source Image Id
+
+- `instance_charge_type` (string) - PostPaidByDay or PostPaidByHour
+  default is PostPaidByDay
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `system_disk_type` (string) - Local_SSD || SSD3.0 || EHDD
+
+- `system_disk_size` (int) - System Disk Size
+
+- `data_disks` ([]KsyunEbsDataDisk) - EbsDataDisk
+
+- `instance_name` (string) - Display name of the instance, which is a string of 2 to 128 Chinese or
+  English characters. It must begin with an uppercase/lowercase letter or
+  a Chinese charac displayed on the Alibaba Cloud console. If this
+  	// parameter is not specified, the default value is InstanceId of the
+  	// instance. It cannot begin with `http://` or `https://`.ter and can contain numerals, `.`, `_`, or `-`. The
+  instance name is packer_kec_instance
+
+- `sriov_net_support` (bool) - This parameter needs to satisfy the following two conditions:
+  IO optimized I1, calculation optimized C1, and IO optimized I2 are more than 8C packages
+  We use the standard image improved by Jinshan cloud or the user-defined image made by
+  the instance of starting the Jinshan cloud standard image
+  default : false
+
+- `local_volume_snapshot_id` (string) - Local Volume Snapshot Id
+
+- `data_disk_gb` (int) - The data volume capacity is in GB. The capacity limit changes according to the definition of the instance package
+  type. If it is not specified when calling, it is the minimum value of the corresponding instance package type.
+  When the instancetype is a general-purpose host N1, N2, N3 or a local nvme I4, this parameter
+  does not take effect.
+
+- `user_data` (string) - The user-defined data provided for instance startup needs to be encoded in Base64 mode,
+  and the maximum data size supported is 16kb
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+## Access Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the AccessConfig struct in builder/access_config.go; DO NOT EDIT MANUALLY -->
+
+- `access_key` (string) - Ksyun access key must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_ACCESS_KEY` environment variable.
+
+- `secret_key` (string) - Ksyun secret key must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_SECRET_KEY` environment variable.
+
+- `region` (string) - Ksyun region must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_REGION` environment variable.
+
+<!-- End of code generated from the comments of the AccessConfig struct in builder/access_config.go; -->
+
+
+## General Configuration
+
+### Optional:
+
+<!-- Code generated from the comments of the CommonConfig struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `vpc_id` (string) - VPC ID allocated by the system.
+
+- `vpc_name` (string) - the default value is packer_vpc
+
+- `vpc_cidr_block` (string) - 172.16.0.0/16. When not specified, the default value is 172.16.0.0/16.
+
+- `subnet_id` (string) - The ID of the Subnet to be used.
+
+- `subnet_name` (string) - the default value is packer_subnet
+
+- `dns1` (string) - 172.16.0.0/24. When not specified, the default value is 172.16.0.0/24.
+
+- `dns2` (string) - DNS 2
+
+- `subnet_cidr_block` (string) - Subnet Cidr Block
+
+- `availability_zone` (string) - availability_zone
+
+- `security_group_id` (string) - ID of the security group to which a newly
+  created instance belongs. Mutual access is allowed between instances in one
+  security group. If not specified, the newly created instance will be added
+  to the default security group. If the default group doesn’t exist, or the
+  number of instances in it has reached the maximum limit, a new security
+  group will be created automatically.
+
+- `security_group_name` (string) - The security group name. The default value
+  is blank. [2, 128] English or Chinese characters, must begin with an
+  uppercase/lowercase letter or Chinese character. Can contain numbers, .,
+  _ or -. It cannot begin with `http://` or `https://`.
+  the default value is packer_security_group
+
+- `private_ip_address` (string) - Private IP address, which specifies any valid value within the range of subnet IP address and represents
+  the primary IP address of the instance. Only one can be selected and bound to the primary network card.
+  If this parameter is not specified, the system will automatically select one from the valid address pool at random
+  Valid values: standard IP address format
+
+- `associate_public_ip_address` (bool) - Associate Public Ip Address
+
+- `public_ip_charge_type` (string) - PublicIp charge type, which can be
+  Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement
+  Default is Daily
+
+- `public_ip_band_width` (int) - [1-100]
+  Default is 1
+
+- `project_id` (string) - Default is 0
+
+<!-- End of code generated from the comments of the CommonConfig struct in builder/common_config.go; -->
+
+
+## Image Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_name` (string) - The name of the user-defined image, [2, 64] English or Chinese
+  characters. It must begin with an uppercase/lowercase letter or a
+  Chinese character, and may contain numbers, `_` or `-`. It cannot begin
+  with `http://` or `https://`.
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_type` (string) - The type of image
+  LocalImage (ebs) or CommonImage (ks3)
+
+- `image_ignore_data_disks` (bool) - If this value is true, the image created will not include any snapshot
+  of data disks. The default value is false.
+
+- `image_copy_regions` ([]string) - Copy to the regions.
+
+- `image_copy_names` ([]string) - Ksyun Image Copy Names
+
+- `image_share_accounts` ([]string) - Share image to other accounts
+
+- `image_warm_up` (bool) - Set the image as warm-up for fast boot
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+
+
+### Source Image Filter Configuration
+
+<!-- Code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `most_recent` (bool) - Selects the newest created image when true.
+  This is most useful for selecting a daily distro build.
+
+- `image_source` (string) - ImageSource Valid values are import, copy, share, extend, system.
+
+- `name_regex` (string) - NameRegex A regex string to filter resulting images by name.
+  (Such as: `^CentOS 7.[1-2] 64` means CentOS 7.1 of 64-bit operating system or CentOS 7.2 of 64-bit operating system,
+  \"^Ubuntu 16.04 64\" means Ubuntu 16.04 of 64-bit operating system).
+
+- `platform` (string) - Platform type of the image system.
+
+<!-- End of code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; -->
+SYUN_SECRET_KEY` environment variable.
+
+- `region` (string) - Ksyun region must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_REGION` environment variable.
+
+<!-- End of code generated from the comments of the AccessConfig struct in builder/access_config.go; -->
+
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `instance_type` (string) - Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
+
+- `source_image_id` (string) - Source Image Id
+
+- `instance_charge_type` (string) - PostPaidByDay or PostPaidByHour
+  default is PostPaidByDay
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the CommonConfig struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `vpc_id` (string) - VPC ID allocated by the system.
+
+- `vpc_name` (string) - the default value is packer_vpc
+
+- `vpc_cidr_block` (string) - 172.16.0.0/16. When not specified, the default value is 172.16.0.0/16.
+
+- `subnet_id` (string) - The ID of the Subnet to be used.
+
+- `subnet_name` (string) - the default value is packer_subnet
+
+- `dns1` (string) - 172.16.0.0/24. When not specified, the default value is 172.16.0.0/24.
+
+- `dns2` (string) - DNS 2
+
+- `subnet_cidr_block` (string) - Subnet Cidr Block
+
+- `availability_zone` (string) - availability_zone
+
+- `security_group_id` (string) - ID of the security group to which a newly
+  created instance belongs. Mutual access is allowed between instances in one
+  security group. If not specified, the newly created instance will be added
+  to the default security group. If the default group doesn’t exist, or the
+  number of instances in it has reached the maximum limit, a new security
+  group will be created automatically.
+
+- `security_group_name` (string) - The security group name. The default value
+  is blank. [2, 128] English or Chinese characters, must begin with an
+  uppercase/lowercase letter or Chinese character. Can contain numbers, .,
+  _ or -. It cannot begin with `http://` or `https://`.
+  the default value is packer_security_group
+
+- `private_ip_address` (string) - Private IP address, which specifies any valid value within the range of subnet IP address and represents
+  the primary IP address of the instance. Only one can be selected and bound to the primary network card.
+  If this parameter is not specified, the system will automatically select one from the valid address pool at random
+  Valid values: standard IP address format
+
+- `associate_public_ip_address` (bool) - Associate Public Ip Address
+
+- `public_ip_charge_type` (string) - PublicIp charge type, which can be
+  Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement
+  Default is Daily
+
+- `public_ip_band_width` (int) - [1-100]
+  Default is 1
+
+- `project_id` (string) - Default is 0
+
+<!-- End of code generated from the comments of the CommonConfig struct in builder/common_config.go; -->
+
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `system_disk_type` (string) - Local_SSD || SSD3.0 || EHDD
+
+- `system_disk_size` (int) - System Disk Size
+
+- `data_disks` ([]KsyunEbsDataDisk) - EbsDataDisk
+
+- `instance_name` (string) - Display name of the instance, which is a string of 2 to 128 Chinese or
+  English characters. It must begin with an uppercase/lowercase letter or
+  a Chinese charac displayed on the Alibaba Cloud console. If this
+  	// parameter is not specified, the default value is InstanceId of the
+  	// instance. It cannot begin with `http://` or `https://`.ter and can contain numerals, `.`, `_`, or `-`. The
+  instance name is packer_kec_instance
+
+- `sriov_net_support` (bool) - This parameter needs to satisfy the following two conditions:
+  IO optimized I1, calculation optimized C1, and IO optimized I2 are more than 8C packages
+  We use the standard image improved by Jinshan cloud or the user-defined image made by
+  the instance of starting the Jinshan cloud standard image
+  default : false
+
+- `local_volume_snapshot_id` (string) - Local Volume Snapshot Id
+
+- `data_disk_gb` (int) - The data volume capacity is in GB. The capacity limit changes according to the definition of the instance package
+  type. If it is not specified when calling, it is the minimum value of the corresponding instance package type.
+  When the instancetype is a general-purpose host N1, N2, N3 or a local nvme I4, this parameter
+  does not take effect.
+
+- `user_data` (string) - The user-defined data provided for instance startup needs to be encoded in Base64 mode,
+  and the maximum data size supported is 16kb
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+## Image Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_name` (string) - The name of the user-defined image, [2, 64] English or Chinese
+  characters. It must begin with an uppercase/lowercase letter or a
+  Chinese character, and may contain numbers, `_` or `-`. It cannot begin
+  with `http://` or `https://`.
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_type` (string) - The type of image
+  LocalImage (ebs) or CommonImage (ks3)
+
+- `image_ignore_data_disks` (bool) - If this value is true, the image created will not include any snapshot
+  of data disks. The default value is false.
+
+- `image_copy_regions` ([]string) - Copy to the regions.
+
+- `image_copy_names` ([]string) - Ksyun Image Copy Names
+
+- `image_share_accounts` ([]string) - Share image to other accounts
+
+- `image_warm_up` (bool) - Set the image as warm-up for fast boot
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+
+
+### Source Image Filter Configuration
+
+<!-- Code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `most_recent` (bool) - Selects the newest created image when true.
+  This is most useful for selecting a daily distro build.
+
+- `image_source` (string) - ImageSource Valid values are import, copy, share, extend, system.
+
+- `name_regex` (string) - NameRegex A regex string to filter resulting images by name.
+  (Such as: `^CentOS 7.[1-2] 64` means CentOS 7.1 of 64-bit operating system or CentOS 7.2 of 64-bit operating system,
+  \"^Ubuntu 16.04 64\" means Ubuntu 16.04 of 64-bit operating system).
+
+- `platform` (string) - Platform type of the image system.
+
+<!-- End of code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; -->
+on must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_REGION` environment variable.
+
+<!-- End of code generated from the comments of the AccessConfig struct in builder/access_config.go; -->
+
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `instance_type` (string) - Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
+
+- `source_image_id` (string) - Source Image Id
+
+- `instance_charge_type` (string) - PostPaidByDay or PostPaidByHour
+  default is PostPaidByDay
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the CommonConfig struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `vpc_id` (string) - VPC ID allocated by the system.
+
+- `vpc_name` (string) - the default value is packer_vpc
+
+- `vpc_cidr_block` (string) - 172.16.0.0/16. When not specified, the default value is 172.16.0.0/16.
+
+- `subnet_id` (string) - The ID of the Subnet to be used.
+
+- `subnet_name` (string) - the default value is packer_subnet
+
+- `dns1` (string) - 172.16.0.0/24. When not specified, the default value is 172.16.0.0/24.
+
+- `dns2` (string) - DNS 2
+
+- `subnet_cidr_block` (string) - Subnet Cidr Block
+
+- `availability_zone` (string) - availability_zone
+
+- `security_group_id` (string) - ID of the security group to which a newly
+  created instance belongs. Mutual access is allowed between instances in one
+  security group. If not specified, the newly created instance will be added
+  to the default security group. If the default group doesn’t exist, or the
+  number of instances in it has reached the maximum limit, a new security
+  group will be created automatically.
+
+- `security_group_name` (string) - The security group name. The default value
+  is blank. [2, 128] English or Chinese characters, must begin with an
+  uppercase/lowercase letter or Chinese character. Can contain numbers, .,
+  _ or -. It cannot begin with `http://` or `https://`.
+  the default value is packer_security_group
+
+- `private_ip_address` (string) - Private IP address, which specifies any valid value within the range of subnet IP address and represents
+  the primary IP address of the instance. Only one can be selected and bound to the primary network card.
+  If this parameter is not specified, the system will automatically select one from the valid address pool at random
+  Valid values: standard IP address format
+
+- `associate_public_ip_address` (bool) - Associate Public Ip Address
+
+- `public_ip_charge_type` (string) - PublicIp charge type, which can be
+  Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement
+  Default is Daily
+
+- `public_ip_band_width` (int) - [1-100]
+  Default is 1
+
+- `project_id` (string) - Default is 0
+
+<!-- End of code generated from the comments of the CommonConfig struct in builder/common_config.go; -->
+
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `system_disk_type` (string) - Local_SSD || SSD3.0 || EHDD
+
+- `system_disk_size` (int) - System Disk Size
+
+- `data_disks` ([]KsyunEbsDataDisk) - EbsDataDisk
+
+- `instance_name` (string) - Display name of the instance, which is a string of 2 to 128 Chinese or
+  English characters. It must begin with an uppercase/lowercase letter or
+  a Chinese charac displayed on the Alibaba Cloud console. If this
+  	// parameter is not specified, the default value is InstanceId of the
+  	// instance. It cannot begin with `http://` or `https://`.ter and can contain numerals, `.`, `_`, or `-`. The
+  instance name is packer_kec_instance
+
+- `sriov_net_support` (bool) - This parameter needs to satisfy the following two conditions:
+  IO optimized I1, calculation optimized C1, and IO optimized I2 are more than 8C packages
+  We use the standard image improved by Jinshan cloud or the user-defined image made by
+  the instance of starting the Jinshan cloud standard image
+  default : false
+
+- `local_volume_snapshot_id` (string) - Local Volume Snapshot Id
+
+- `data_disk_gb` (int) - The data volume capacity is in GB. The capacity limit changes according to the definition of the instance package
+  type. If it is not specified when calling, it is the minimum value of the corresponding instance package type.
+  When the instancetype is a general-purpose host N1, N2, N3 or a local nvme I4, this parameter
+  does not take effect.
+
+- `user_data` (string) - The user-defined data provided for instance startup needs to be encoded in Base64 mode,
+  and the maximum data size supported is 16kb
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+## Image Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_name` (string) - The name of the user-defined image, [2, 64] English or Chinese
+  characters. It must begin with an uppercase/lowercase letter or a
+  Chinese character, and may contain numbers, `_` or `-`. It cannot begin
+  with `http://` or `https://`.
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_type` (string) - The type of image
+  LocalImage (ebs) or CommonImage (ks3)
+
+- `image_ignore_data_disks` (bool) - If this value is true, the image created will not include any snapshot
+  of data disks. The default value is false.
+
+- `image_copy_regions` ([]string) - Copy to the regions.
+
+- `image_copy_names` ([]string) - Ksyun Image Copy Names
+
+- `image_share_accounts` ([]string) - Share image to other accounts
+
+- `image_warm_up` (bool) - Set the image as warm-up for fast boot
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+.mdx'

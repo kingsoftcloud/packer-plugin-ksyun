@@ -1,4 +1,5 @@
 //go:generate packer-sdc struct-markdown
+
 package kec
 
 import (
