@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     ksyun = {
-      version = ">=0.1.0"
+      version = ">=0.2.0"
       source  = "github.com/kingsoftcloud/ksyun"
     }
   }
@@ -17,22 +17,16 @@ variable sk {
   default = "${env("KSYUN_SECRET_KEY")}"
 }
 
-data "ksyun-kmi" "foo" {
-  access_key   = var.ak
-  secret_key   = var.sk
-  region       = "cn-shanghai-2"
-  platform     = "centos-7.5"
-  name_regex   = "centos-7.5.*"
-  image_source = "system" // import, copy, share, extend, system.
-  most_recent  = true
-}
-
 source "ksyun-kec" "test" {
   access_key      = var.ak
   secret_key      = var.sk
   region          = "cn-shanghai-2"
   image_name      = "packer_test"
-  source_image_id = "IMG-05f198b3-9df6-4f94-a3e3-dcee4b48c4aa"
+
+  // 如果 source_image_id = "", 那么将会使用 source_image_filter 来过滤出 source_image_id
+  // 同样满足直接指定source_image_id
+  // 如:   source_image_id = "IMG-05f198b3-9df6-4f94-a3e3-dcee4b48c4aa"
+  source_image_id = ""
   instance_type   = "N3.1B"
   ssh_username    = "root"
 
@@ -64,12 +58,15 @@ source "ksyun-kec" "test" {
   # 镜像共享给其他用户
   #  image_share_accounts = ["xxxxxxxx", "xxxxxxxx"]
 
-#  source_image_filter {
-#    platform     = "centos-7.5"
-#    name_regex   = "centos-7.5.*"
-#    image_source = "system" // import, copy, share, extend, system.
-#    most_recent  = true
-#  }
+  # 注意：
+  # 如果 source_image_id != "", 将会以source_image_id作为查询条件，并以source_image_filter进行过滤
+  # 若source_image_id所属镜像不满足source_image_filter条件则无法以该source_image_id进行镜像创建
+  source_image_filter {
+    platform     = "centos-7.5"
+    name_regex   = "centos-7.5.*"
+    image_source = "system" // import, copy, share, extend, system.
+    most_recent  = true
+  }
 }
 
 build {
