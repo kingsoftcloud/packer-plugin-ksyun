@@ -3,6 +3,13 @@
 Please refer to [releases](https://github.com/kingsoftcloud/packer-plugin-ksyun/releases) for the latest CHANGELOG information.
 
 ---
+## 0.2.0 (Jul 5, 2023)
+
+### FEATURES
+
+* Support `source_image_filter`, support filtering source image that used to `source_image_id` field by options.
+* Datasource Type `ksyun_kmi`, add a Datasource type is ksyun_kmi, that allows query a ksyun image by options.
+
 ## 0.1.0 (Jun 29, 2023)
 
 ### FEATURES
