@@ -41,10 +41,10 @@ type KsyunImageConfig struct {
 	KsyunImageCopyRegions []string `mapstructure:"image_copy_regions" required:"false"`
 	KsyunImageCopyNames   []string `mapstructure:"image_copy_names" required:"false"`
 
-	// Share images
+	// Share image to other accounts
 	KsyunImageShareAccounts []string `mapstructure:"image_share_accounts" required:"false"`
 
-	// Image warmup
+	// Set the image as warm-up for fast boot
 	KsyunImageWarmUp bool `mapstructure:"image_warm_up" required:"false"`
 }
 

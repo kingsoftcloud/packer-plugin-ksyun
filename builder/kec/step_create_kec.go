@@ -3,6 +3,7 @@ package kec
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/kingsoftcloud/packer-plugin-ksyun/builder"
@@ -28,6 +29,13 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 
 	ui.Say("Creating Ksyun Kec Instance")
 
+	sourceImage, ok := stateBag.Get("source_image").(*ksyun.Ks3Image)
+	if !ok {
+		stateBag.Put("error", fmt.Errorf("source_image type assertion failed"))
+		return multistep.ActionHalt
+	}
+	s.KsyunRunConfig.SourceImageId = sourceImage.ImageId
+
 	createInstance := make(map[string]interface{})
 	createInstance["InstanceType"] = s.KsyunRunConfig.InstanceType
 	createInstance["InstanceName"] = s.KsyunRunConfig.InstanceName
@@ -35,7 +43,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 	createInstance["ProjectId"] = s.KsyunRunConfig.ProjectId
 	createInstance["MaxCount"] = "1"
 	createInstance["MinCount"] = "1"
-	//SystemDisk
+	// SystemDisk
 	if s.KsyunRunConfig.SystemDiskType != "" {
 		createInstance["SystemDisk.DiskType"] = s.KsyunRunConfig.SystemDiskType
 	}
@@ -43,7 +51,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 	if s.KsyunRunConfig.SystemDiskSize != 0 {
 		createInstance["SystemDisk.DiskSize"] = s.KsyunRunConfig.SystemDiskSize
 	}
-	//localDataDisk
+	// localDataDisk
 	if s.KsyunRunConfig.DataDiskGb != 0 {
 		createInstance["DataDiskGb"] = s.KsyunRunConfig.DataDiskGb
 	}
@@ -53,7 +61,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 		createInstance["LocalVolumeSnapshotId"] = s.KsyunRunConfig.LocalVolumeSnapshotId
 	}
 
-	//ebsDataDisk
+	// ebsDataDisk
 	if len(s.KsyunRunConfig.KsyunEbsDataDisks) > 0 {
 		for index, v := range s.KsyunRunConfig.KsyunEbsDataDisks {
 			ebsType := fmt.Sprintf("DataDisk.%d.Type", index+1)
@@ -68,17 +76,17 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 			}
 		}
 	}
-	//subnetId
+	// subnetId
 	createInstance["subnetId"] = s.KsyunRunConfig.SubnetId
-	//securityGroupId
+	// securityGroupId
 	createInstance["securityGroupId"] = s.KsyunRunConfig.SecurityGroupId
-	//PrivateIpAddress
+	// PrivateIpAddress
 	if s.KsyunRunConfig.PrivateIpAddress != "" {
 		createInstance["PrivateIpAddress"] = s.KsyunRunConfig.PrivateIpAddress
 	}
 	createInstance["KeepImageLogin"] = false
 
-	//password/ssh/key
+	// password/ssh/key
 	if s.KsyunRunConfig.Comm.SSHKeyPairName != "" {
 		createInstance["KeyId.1"] = s.KsyunRunConfig.Comm.SSHKeyPairName
 	} else {
@@ -88,7 +96,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 			createInstance["InstancePassword"] = s.KsyunRunConfig.Comm.WinRMPassword
 		}
 	}
-	//chargeType
+	// chargeType
 	checkChargeType := false
 	if s.KsyunRunConfig.InstanceChargeType == "" {
 		s.KsyunRunConfig.InstanceChargeType = defaultKecChargeType
@@ -105,21 +113,21 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 		return ksyun.Halt(stateBag, fmt.Errorf("instance_charge_type not match"), "")
 	}
 	createInstance["ChargeType"] = s.KsyunRunConfig.InstanceChargeType
-	//SriovNetSupport
+	// SriovNetSupport
 	if s.KsyunRunConfig.SriovNetSupport {
 		createInstance["SriovNetSupport"] = s.KsyunRunConfig.SriovNetSupport
 	}
-	//userdata
+	// userdata
 	if s.KsyunRunConfig.UserData != "" {
 		createInstance["UserData"] = s.KsyunRunConfig.UserData
 	}
-	//create
+	// create
 	createResp, createErr := client.KecClient.RunInstances(&createInstance)
 	if createErr != nil {
 		return ksyun.Halt(stateBag, createErr, "Error creating new kec instance")
 	}
 	if createResp != nil {
-		//Get data
+		// Get data
 		instanceId := ksyun.GetSdkValue(stateBag, "InstancesSet.0.InstanceId", *createResp).(string)
 
 		s.InstanceId = instanceId
