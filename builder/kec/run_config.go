@@ -4,10 +4,11 @@ package kec
 import (
 	"errors"
 	"fmt"
+	"regexp"
+
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
 	ksyun "github.com/kingsoftcloud/packer-plugin-ksyun/builder"
-	"regexp"
 )
 
 type KsyunEbsDataDisk struct {
@@ -20,9 +21,23 @@ type KsyunEbsDataDisk struct {
 }
 
 type KsyunKecRunConfig struct {
-	//Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
+	// Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
 	InstanceType  string `mapstructure:"instance_type" required:"true"`
-	SourceImageId string `mapstructure:"source_image_id" required:"true"`
+	SourceImageId string `mapstructure:"source_image_id" required:"false"`
+	// Filters used to populate the `source_image_id` field.
+	//
+	// Example Hcl usage:
+	// ```hcl
+	//  source_image_filter {
+	//    platform     = "centos-7.5"
+	//    name_regex   = "centos-7.5.*"
+	//    image_source = "system" // import, copy, share, extend, system.
+	//    most_recent  = true
+	//  }
+	// ```
+	//
+	SourceImageFilter ksyun.KmiFilterOptions `mapstructure:"source_image_filter" required:"false"`
+
 	// Local_SSD || SSD3.0 || EHDD
 	SystemDiskType string `mapstructure:"system_disk_type" required:"false"`
 	SystemDiskSize int    `mapstructure:"system_disk_size" required:"false"`
@@ -66,13 +81,13 @@ func (c *KsyunKecRunConfig) Prepare(ctx *interpolate.Context) []error {
 	// Validation
 	errs := c.Comm.Prepare(ctx)
 	// source_image
-	if c.SourceImageId == "" {
-		errs = append(errs, errors.New("A source_image_id must be specified"))
+	if c.SourceImageId == "" && c.SourceImageFilter.IsEmpty() {
+		errs = append(errs, errors.New("A source_image_id or source_image_filter must be specified"))
 	}
 
 	match, _ := regexp.MatchString("^(IMG-)?[a-zA-Z0-9-]{36}$", c.SourceImageId)
-	if !match {
-		errs = append(errs, fmt.Errorf("source_image_id can't matched"))
+	if c.SourceImageId != "" && !match {
+		errs = append(errs, fmt.Errorf("source_image_id is invalid"))
 	}
 
 	if c.InstanceType == "" {
