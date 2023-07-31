@@ -83,9 +83,13 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		&ksyun.StepConfigKsyunCommon{
 			CommonConfig: &b.config.CommonConfig,
 		},
-		&stepCheckKsyunSourceImage{
+		&stepFilterSourceImage{
 			SourceImageId: b.config.SourceImageId,
+			KmiFilters:    &b.config.SourceImageFilter,
 		},
+		// &stepCheckKsyunSourceImage{
+		// 	SourceImageId: b.config.SourceImageId,
+		// },
 		&ksyun.StepConfigKsyunKeyPair{
 			CommonConfig:          &b.config.CommonConfig,
 			SSHTemporaryPublicKey: &SSHTemporaryPublicKey,

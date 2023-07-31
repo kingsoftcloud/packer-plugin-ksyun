@@ -17,9 +17,7 @@ type stepFilterSourceImage struct {
 func (s *stepFilterSourceImage) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packersdk.Ui)
 	client := stateBag.Get("client").(*ClientKecWrapper)
-	// instanceId := stateBag.Get("InstanceId").(string)
-	// TODO: prepare information filtered
-	ui.Say(fmt.Sprintf("%v", s))
+	// ui.Say(fmt.Sprintf("%v", s))
 	var params *map[string]interface{}
 	if s.SourceImageId != "" {
 		params = &map[string]interface{}{
