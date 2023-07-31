@@ -94,5 +94,12 @@ func (c *KsyunKecRunConfig) Prepare(ctx *interpolate.Context) []error {
 		errs = append(errs, errors.New("A ksyun_instance_type must be specified"))
 	}
 
+	if c.RunTags == nil {
+		c.RunTags = make(map[string]string)
+	}
+
+	// Copy singular tag maps
+	errs = append(errs, c.RunTag.CopyOn(&c.RunTags)...)
+
 	return errs
 }

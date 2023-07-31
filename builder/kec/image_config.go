@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 )
 
@@ -46,6 +47,15 @@ type KsyunImageConfig struct {
 
 	// Set the image as warm-up for fast boot
 	KsyunImageWarmUp bool `mapstructure:"image_warm_up" required:"false"`
+
+	//  Key/value pair tags applied to the destination image and relevant snapshots.
+	Tags map[string]string `mapstructure:"tags" required:"false"`
+
+	// Same as [`tags`](#tags) but defined as a singular repeatable
+	// block containing a `key` and a `value` field. In HCL2 mode the
+	// [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
+	// will allow you to create those programatically.
+	Tag config.KeyValues `mapstructure:"tag" required:"false"`
 }
 
 func (c *KsyunImageConfig) Prepare(ctx *interpolate.Context) []error {
@@ -59,5 +69,12 @@ func (c *KsyunImageConfig) Prepare(ctx *interpolate.Context) []error {
 	if !match {
 		errs = append(errs, fmt.Errorf("image_name can't matched"))
 	}
+
+	if c.Tags == nil {
+		c.Tags = make(map[string]string)
+	}
+
+	// Copy singular tag maps
+	errs = append(errs, c.Tag.CopyOn(&c.Tags)...)
 	return errs
 }

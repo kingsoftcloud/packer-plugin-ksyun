@@ -2,12 +2,14 @@ package ksyun
 
 import (
 	"fmt"
-	"github.com/hashicorp/packer-plugin-sdk/communicator"
-	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/hashicorp/go-uuid"
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
+	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 )
 
 type AfterStepRun func()
@@ -34,10 +36,10 @@ func Halt(stateBag multistep.StateBag, err error, prefix string) multistep.StepA
 func GetSdkValue(stateBag multistep.StateBag, keyPattern string, obj interface{}) interface{} {
 	keys := strings.Split(keyPattern, ".")
 	root := obj
-	//log.Println(obj, 23)
-	//log.Println("GetSdkValue keyPattern:", keyPattern)
+	// log.Println(obj, 23)
+	// log.Println("GetSdkValue keyPattern:", keyPattern)
 	for index, k := range keys {
-		//log.Println("GetSdkValue key:", k)
+		// log.Println("GetSdkValue key:", k)
 		if reflect.ValueOf(root).Kind() == reflect.Map {
 			root = root.(map[string]interface{})[k]
 			if root == nil {
@@ -84,7 +86,7 @@ func GetCidrIpMask(maskLen int) string {
 	// ^uint32(0)二进制为32个比特1，通过向左位移，得到CIDR掩码的二进制
 	cidrMask := ^uint32(0) << uint(32-maskLen)
 	fmt.Println(fmt.Sprintf("%b \n", cidrMask))
-	//计算CIDR掩码的四个片段，将想要得到的片段移动到内存最低8位后，将其强转为8位整型，从而得到
+	// 计算CIDR掩码的四个片段，将想要得到的片段移动到内存最低8位后，将其强转为8位整型，从而得到
 	cidrMaskSeg1 := uint8(cidrMask >> 24)
 	cidrMaskSeg2 := uint8(cidrMask >> 16)
 	cidrMaskSeg3 := uint8(cidrMask >> 8)
@@ -126,4 +128,11 @@ func StringInSlice(v string, valid []string, ignoreCase bool) bool {
 		}
 	}
 	return false
+}
+
+func IsUuid(v string) bool {
+	if _, err := uuid.ParseUUID(v); err != nil {
+		return false
+	}
+	return true
 }
