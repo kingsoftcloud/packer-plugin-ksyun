@@ -24,7 +24,7 @@ type KsyunEbsDataDisk struct {
 type KsyunKecRunConfig struct {
 	// Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
 	InstanceType  string `mapstructure:"instance_type" required:"true"`
-	SourceImageId string `mapstructure:"source_image_id" required:"false"`
+	SourceImageId string `mapstructure:"source_image_id" required:"true"`
 	// Filters used to populate the `source_image_id` field.
 	//
 	// Example Hcl usage:

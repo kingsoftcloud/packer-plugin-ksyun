@@ -41,7 +41,8 @@ type KsyunImageConfig struct {
 
 	// Copy to the regions.
 	KsyunImageCopyRegions []string `mapstructure:"image_copy_regions" required:"false"`
-	KsyunImageCopyNames   []string `mapstructure:"image_copy_names" required:"false"`
+	// The image name in copied regions
+	KsyunImageCopyNames []string `mapstructure:"image_copy_names" required:"false"`
 
 	// Share image to other accounts
 	KsyunImageShareAccounts []string `mapstructure:"image_share_accounts" required:"false"`

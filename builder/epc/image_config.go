@@ -1,12 +1,18 @@
+//go:generate packer-sdc struct-markdown
 package epc
 
 import (
 	"fmt"
-	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"regexp"
+
+	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 )
 
 type KsyunImageConfig struct {
+	// The name of the user-defined image, [2, 64] English or Chinese
+	// characters. It must begin with an uppercase/lowercase letter or a
+	// Chinese character, and may contain numbers, `_` or `-`. It cannot begin
+	// with `http://` or `https://`.
 	KsyunImageName string `mapstructure:"image_name" required:"false"`
 }
 

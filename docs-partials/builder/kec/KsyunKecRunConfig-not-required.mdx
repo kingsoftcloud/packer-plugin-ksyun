@@ -1,5 +1,17 @@
 <!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
 
+- `source_image_filter` (ksyun.KmiFilterOptions) - Filters used to populate the `source_image_id` field.
+  
+  Example Hcl usage:
+  ```hcl
+   source_image_filter {
+     platform     = "centos-7.5"
+     name_regex   = "centos-7.5.*"
+     image_source = "system" // import, copy, share, extend, system.
+     most_recent  = true
+   }
+  ```
+
 - `system_disk_type` (string) - Local_SSD || SSD3.0 || EHDD
 
 - `system_disk_size` (int) - System Disk Size

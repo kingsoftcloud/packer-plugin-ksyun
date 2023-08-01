@@ -1,40 +1,46 @@
 <!-- Code generated from the comments of the KsyunEpcRunConfig struct in builder/epc/run_config.go; DO NOT EDIT MANUALLY -->
 
-- `raid` (string) - Raid
+- `raid` (string) - Data Disk Raid level. Valid options: `Raid1`, `Raid5`, `Raid10`, `Raid50` and `SRaid0`,
+  the details see the [Raid of epc information](https://docs.ksyun.com/documents/651)
 
-- `network_interface_mode` (string) - Network Interface Mode
+- `network_interface_mode` (string) - Network interface mode. Valid options: `bond4`, `single` and `dual`.
 
-- `host_name` (string) - Host Name
+- `host_name` (string) - The name of epc host. Default value: `ksc_epc`.
 
-- `computer_name` (string) - Computer Name
+- `computer_name` (string) - The system name of this epc computer.
 
 - `host_charge_type` (string) - Host Charge Type
 
-- `security_agent` (string) - Security Agent
+- `security_agent` (string) - Security component type. Valid options: `classic` and `no`.
 
-- `container_agent` (string) - Container Agent
+- `container_agent` (string) - Container engine component type. Valid options: `supported` and `unsupported`, Default `unsupported`.
 
-- `cloud_monitor_agent` (string) - Cloud Monitor Agent
+- `cloud_monitor_agent` (string) - The monitor agent.
 
-- `system_file_type` (string) - System File Type
+- `system_file_type` (string) - The system disk file type. Valid options: `EXT4` and `XFS`. Default `EXT4`.
 
-- `data_file_type` (string) - Data File Type
+- `data_file_type` (string) - The Data disk file type. Valid options: `EXT4` and `XFS`. Default `EXT4`.
 
-- `data_disk_catalogue` (string) - Data Disk Catalogue
+- `data_disk_catalogue` (string) - The catalogue of data disk. Valid options: `/DATA/disk` and `/data`. Default `/data`.
 
-- `data_disk_catalogue_suffix` (string) - Data Disk Catalogue Suffix
+- `data_disk_catalogue_suffix` (string) - The suffix of data disk catalogue.
+  `NoSuffix`: creating data disk catalogue without suffix, but it's valid, when there is one data disk.
+  `NaturalNumber`: creating data disk catalogue with suffix that increment from 1.
+  `NaturalNumberFromZero`: creating data disk catalogue with suffix that increment from 0.
+  Valid options: `NoSuffix`, `NaturalNumber` and `NaturalNumberFromZero`.
+  Default `NaturalNumber`
 
-- `extension_subnet_id` (string) - Extension Subnet Id
+- `extension_subnet_id` (string) - The subnet id of secondary network interface
 
-- `extension_subnet_name` (string) - Extension Subnet Name
+- `extension_subnet_name` (string) - The subnet name of secondary network interface
 
-- `extension_subnet_cidr_block` (string) - Extension Subnet Cidr Block
+- `extension_subnet_cidr_block` (string) - The subnet cidr block of secondary network interface.
 
-- `extension_private_ip_address` (string) - Extension Private Ip Address
+- `extension_private_ip_address` (string) - The private ip address under the vpc of secondary network interface.
 
-- `extension_dns1` (string) - Extension DNS 1
+- `extension_dns1` (string) - The address of first dns server.
 
-- `extension_dns2` (string) - Extension DNS 2
+- `extension_dns2` (string) - The address of second dns server.
 
 - `extension_security_group_id` (string) - Extension Security Group Id
 

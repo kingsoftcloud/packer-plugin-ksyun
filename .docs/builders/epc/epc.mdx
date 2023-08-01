@@ -1,0 +1,61 @@
+---
+description: >
+The ksyun-epc Packer builder is able to create Ksyun Images backed by
+
+instance storage as the root device.
+
+page_title: Ksyun EPC - Builders
+nav_title: Epc
+---
+
+# Ksyun Image Builder (epc)
+
+Type: `ksyun-epc`
+
+The `ksyun-epc` Packer builder is able to create Ksyun Images backed by
+bare metal instance storage as the root device.
+
+
+## Configuration Reference
+
+There are many configuration options available for the builder. In addition to
+the items listed here, you will want to look at the general configuration
+references for [Image](#image-configuration),
+[Access](#access-configuration),
+[Run](#run-configuration) and
+[General](#general-configuration)
+configuration references, which are
+necessary for this build to succeed and can be found further down the page.
+
+## Run Configuration
+### Required:
+
+@include 'builder/epc/KsyunEpcRunConfig-required.mdx'
+
+### Optional:
+
+@include 'builder/epc/KsyunEpcRunConfig-not-required.mdx'
+
+## Access Configuration
+
+### Required:
+
+@include 'builder/AccessConfig-required.mdx'
+
+## General Configuration
+
+### Optional:
+
+@include 'builder/CommonConfig-not-required.mdx'
+
+## Image Configuration
+
+### Optional:
+
+@include 'builder/epc/KsyunImageConfig-not-required.mdx'
+
+## Basic Example
+
+Here is a basic example. It is completely valid but excludes the access keys:
+
+### Example Usage
