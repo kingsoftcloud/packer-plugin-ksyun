@@ -139,7 +139,7 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 		}
 		stateBag.Put("InstanceId", instanceId)
 
-		// processing tag on eip
+		// processing tag on kec
 		if len(s.KsyunRunConfig.RunTags) > 0 {
 			ui.Say("Pinning tags on Kec instance")
 			ksyunTags := ksyun.TagMap(s.KsyunRunConfig.RunTags).KsyunTags()

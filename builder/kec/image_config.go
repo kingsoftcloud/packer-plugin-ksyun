@@ -48,7 +48,7 @@ type KsyunImageConfig struct {
 	// Set the image as warm-up for fast boot
 	KsyunImageWarmUp bool `mapstructure:"image_warm_up" required:"false"`
 
-	//  Key/value pair tags applied to the destination image and relevant snapshots.
+	//  Key/value pair tags applied to the destination image.
 	Tags map[string]string `mapstructure:"tags" required:"false"`
 
 	// Same as [`tags`](#tags) but defined as a singular repeatable
