@@ -1,0 +1,136 @@
+---
+description: |
+The Ksyun KMI data source provides information from a KMI that will be fetched based
+on the filter options provided in the configuration.
+
+page_title: Ksyun KMI - Data Source
+nav_title: Ksyun KMI
+---
+
+# Ksyun KMI Data Source
+
+Type: `ksyun-kmi`
+
+The Ksyun KMI data source will filter and fetch a Ksyun Images, and output all the Ksyun Machine images information that will
+be then available to use in the [Ksyun builders](./).
+
+-> **Note:** Data sources is a feature exclusively available to HCL2 templates.
+
+Basic example of usage:
+
+```hcl
+data "ksyun-kmi" "foo" {
+  access_key   = "ksyun access key"
+  secret_key   = "ksyun secret key"
+  region       = "cn-shanghai-2"
+  platform     = "centos-7.5"
+  name_regex   = "centos-7.5.*"
+  image_source = "system" // import, copy, share, extend, system.
+  most_recent  = true
+}
+```
+This selects the most recent Centos 7.5 Ksyun Images from remote Ksyun. Note that the data source will fail unless
+*exactly* one AMI is returned. In the above example, `most_recent` will cause this to succeed by selecting the newest image.
+
+## Configuration Reference
+
+### Required:
+<!-- Code generated from the comments of the AccessConfig struct in builder/access_config.go; DO NOT EDIT MANUALLY -->
+
+- `access_key` (string) - Ksyun access key must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_ACCESS_KEY` environment variable.
+
+- `secret_key` (string) - Ksyun secret key must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_SECRET_KEY` environment variable.
+
+- `region` (string) - Ksyun region must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_REGION` environment variable.
+
+<!-- End of code generated from the comments of the AccessConfig struct in builder/access_config.go; -->
+
+
+### Optional:
+<!-- Code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `most_recent` (bool) - Selects the newest created image when true.
+  This is most useful for selecting a daily distro build.
+
+- `image_source` (string) - ImageSource Valid values are import, copy, share, extend, system.
+
+- `name_regex` (string) - NameRegex A regex string to filter resulting images by name.
+  (Such as: `^CentOS 7.[1-2] 64` means CentOS 7.1 of 64-bit operating system or CentOS 7.2 of 64-bit operating system,
+  \"^Ubuntu 16.04 64\" means Ubuntu 16.04 of 64-bit operating system).
+
+- `platform` (string) - Platform type of the image system.
+
+<!-- End of code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; -->
+
+
+## Output Data
+
+<!-- Code generated from the comments of the DatasourceOutput struct in datasource/kmi/data.go; DO NOT EDIT MANUALLY -->
+
+- `id` (string) - The ID of the image.
+
+- `name` (string) - The name of the image.
+
+- `creation_date` (string) - The date of creation of the image.
+
+- `platform` (string) - Platform
+
+- `image_source` (string) - Image Source
+
+<!-- End of code generated from the comments of the DatasourceOutput struct in datasource/kmi/data.go; -->
+
+
+## Basic Example
+
+Here is a basic example. It is completely valid but excludes the access keys:
+
+### Example Usage
+
+```hcl
+packer {
+  required_plugins {
+    ksyun = {
+      version = ">=0.1.0"
+      source  = "github.com/kingsoftcloud/ksyun"
+    }
+  }
+}
+
+variable ak {
+  type    = string
+  default = "${env("KSYUN_ACCESS_KEY")}"
+}
+
+variable sk {
+  type    = string
+  default = "${env("KSYUN_SECRET_KEY")}"
+}
+
+data "ksyun-kmi" "foo" {
+  access_key   = var.ak
+  secret_key   = var.sk
+  region       = "cn-shanghai-2"
+  platform     = "centos-7.5"
+  name_regex   = "centos-7.5.*"
+  image_source = "system" // import, copy, share, extend, system.
+  most_recent  = true
+}
+
+
+source "ksyun-kec" "test" {
+  access_key      = var.ak
+  secret_key      = var.sk
+  region          = "cn-shanghai-2"
+  image_name      = "packer_test"
+  source_image_id = "IMG-05f198b3-9df6-4f94-a3e3-dcee4b48c4aa"
+  instance_type   = "N3.1B"
+  ssh_username    = "root"
+}
+
+build {
+  sources = ["source.ksyun-kec.test"]
+}
+```
