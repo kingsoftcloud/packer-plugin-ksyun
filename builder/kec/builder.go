@@ -127,6 +127,10 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			KsyunRunConfig:   &b.config.KsyunKecRunConfig,
 			KsyunImageConfig: &b.config.KsyunImageConfig,
 		},
+		&ksyun.StepCreateKsyunTags{
+			Tags:         b.config.Tags,
+			ResourceType: ksyun.ResourceTypeImage,
+		},
 	}
 
 	// Run!

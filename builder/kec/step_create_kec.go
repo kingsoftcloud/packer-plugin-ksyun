@@ -138,6 +138,18 @@ func (s *stepCreateKsyunKec) Run(ctx context.Context, stateBag multistep.StateBa
 			return ksyun.Halt(stateBag, createErr, fmt.Sprintf("Error Wait new kec instance id %s status active", instanceId))
 		}
 		stateBag.Put("InstanceId", instanceId)
+
+		// processing tag on kec
+		if len(s.KsyunRunConfig.RunTags) > 0 {
+			ui.Say("Pinning tags on Kec instance")
+			ksyunTags := ksyun.TagMap(s.KsyunRunConfig.RunTags).KsyunTags()
+			ksyunTags.Report(ui)
+
+			err := ksyunTags.Pinning(ksyun.ResourceTypeKec, instanceId, client.TagsClient)
+			if err != nil {
+				return ksyun.Halt(stateBag, err, "Error pinning tags to instance")
+			}
+		}
 	}
 	return multistep.ActionContinue
 }

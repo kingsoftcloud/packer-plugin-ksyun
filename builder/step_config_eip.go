@@ -3,9 +3,10 @@ package ksyun
 import (
 	"context"
 	"fmt"
+	"strconv"
+
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"strconv"
 )
 
 type StepConfigKsyunPublicIp struct {
@@ -40,7 +41,7 @@ func (s *StepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 		}
 		if checkChargeType {
 			ui.Say("Allocating eip...")
-			//create eip
+			// create eip
 			createEip := make(map[string]interface{})
 			createEip["BandWidth"] = strconv.Itoa(s.CommonConfig.PublicIpBandWidth)
 			createEip["ChargeType"] = s.CommonConfig.PublicIpChargeType
@@ -55,7 +56,7 @@ func (s *StepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 				s.eipId = allocationId
 				stateBag.Put("publicIp", publicIp)
 				ui.Say("Associating eip to instance")
-				//create_security_group_rule
+				// create_security_group_rule
 				authorizeSecurityGroupEntry := make(map[string]interface{})
 				authorizeSecurityGroupEntry["securityGroupId"] = s.CommonConfig.SecurityGroupId
 				authorizeSecurityGroupEntry["CidrBlock"] = "0.0.0.0/0"
@@ -67,7 +68,7 @@ func (s *StepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 				if errRule != nil {
 					return Halt(stateBag, errRule, "Error creating  eip SecurityGroupRule")
 				}
-				//associate eip
+				// associate eip
 				associateAddress := make(map[string]interface{})
 				associateAddress["AllocationId"] = allocationId
 				associateAddress["InstanceType"] = "Ipfwd"
@@ -75,6 +76,18 @@ func (s *StepConfigKsyunPublicIp) Run(ctx context.Context, stateBag multistep.St
 				_, err := client.EipClient.AssociateAddress(&associateAddress)
 				if err != nil {
 					return Halt(stateBag, err, "Error associate eip to instance")
+				}
+
+				// processing tag on eip
+				if len(s.CommonConfig.RunTags) > 0 {
+					ui.Say("Pinning tags on Eip")
+					ksyunTags := TagMap(s.CommonConfig.RunTags).KsyunTags()
+					ksyunTags.Report(ui)
+
+					err = ksyunTags.Pinning(ResourceTypeEip, allocationId, client.TagsClient)
+					if err != nil {
+						return Halt(stateBag, err, "Error pinning tags to eip")
+					}
 				}
 			}
 

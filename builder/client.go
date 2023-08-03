@@ -2,11 +2,13 @@ package ksyun
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/KscSDK/ksc-sdk-go/service/eip"
 	"github.com/KscSDK/ksc-sdk-go/service/sks"
+	"github.com/KscSDK/ksc-sdk-go/service/tagv2"
 	"github.com/KscSDK/ksc-sdk-go/service/vpc"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	"time"
 )
 
 const (
@@ -29,6 +31,8 @@ type ClientWrapper struct {
 	SksClient *sks.Sks
 	EipClient *eip.Eip
 	VpcClient *vpc.Vpc
+
+	TagsClient *tagv2.Tagv2
 }
 
 type ProcessRequestResult struct {
@@ -47,10 +51,10 @@ var (
 		StopRetry: false,
 	}
 
-	//RequestResourceStop = ProcessRequestResult{
+	// RequestResourceStop = ProcessRequestResult{
 	//	Complete:  false,
 	//	StopRetry: true,
-	//}
+	// }
 )
 
 type WaitResourceParam struct {
