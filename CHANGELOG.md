@@ -3,6 +3,13 @@
 Please refer to [releases](https://github.com/kingsoftcloud/packer-plugin-ksyun/releases) for the latest CHANGELOG information.
 
 ---
+## 0.3.0 (Aug 3, 2023)
+
+### FEATURES
+
+* Support `run_tags`, `run_tag` tags to apply to the instance that is launched to create the image.
+* Support`tags`, `tag` tags applied to the destination image.
+
 ## 0.2.0 (Jul 5, 2023)
 
 ### FEATURES
