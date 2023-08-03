@@ -125,7 +125,7 @@ source "ksyun-kec" "test" {
   secret_key      = var.sk
   region          = "cn-shanghai-2"
   image_name      = "packer_test"
-  source_image_id = "IMG-05f198b3-9df6-4f94-a3e3-dcee4b48c4aa"
+  source_image_id = data.ksyun-kmi.foo.id
   instance_type   = "N3.1B"
   ssh_username    = "root"
 }
