@@ -14,6 +14,7 @@ install-packer-sdc: ## Install packer sofware development command
 	go install github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc@${HASHICORP_PACKER_PLUGIN_SDK_VERSION}
 
 ci-release-docs: install-packer-sdc
+	@/bin/sh -c "if [ -d docs ]; then echo \"removed existed docs directory\" && rm -rf docs; fi"
 	@packer-sdc renderdocs -src .docs -partials docs-partials/ -dst docs/
 	@/bin/sh -c "[ -d docs ] && zip -r docs.zip docs/"
 
