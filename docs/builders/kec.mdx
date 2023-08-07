@@ -20,7 +20,6 @@ instance storage as the root device.
 There are many configuration options available for the builder. In addition to
 the items listed here, you will want to look at the general configuration
 references for [Image](#image-configuration),
-[DiskDevices](#disk-devices-configuration),
 [Access](#access-configuration),
 [Run](#run-configuration) and
 [General](#general-configuration)
@@ -54,16 +53,25 @@ necessary for this build to succeed and can be found further down the page.
    source_image_filter {
      platform     = "centos-7.5"
      name_regex   = "centos-7.5.*"
-     image_source = "system" // import, copy, share, extend, system.
+     image_source = "system" # import, copy, share, extend, system.
      most_recent  = true
    }
   ```
+  `most_recent` will cause this to succeed by selecting the newest image.
 
 - `system_disk_type` (string) - Local_SSD || SSD3.0 || EHDD
 
 - `system_disk_size` (int) - System Disk Size
 
-- `data_disks` ([]KsyunEbsDataDisk) - EbsDataDisk
+- `data_disks` ([]KsyunEbsDataDisk) - `data_disks` is able to create Ksyun Kec instance with data disks.
+  Example Hcl usage:
+  ```hcl
+    data_disks {
+     data_disk_type = "SSD3.0"
+     data_disk_size = 50
+     data_disk_snapshot_id = "data disk snapshot id" # creat disk with a data disk snapshot existed.
+   }
+  ```
 
 - `instance_name` (string) - Display name of the instance, which is a string of 2 to 128 Chinese or
   English characters. It must begin with an uppercase/lowercase letter or
@@ -78,7 +86,7 @@ necessary for this build to succeed and can be found further down the page.
   the instance of starting the Jinshan cloud standard image
   default : false
 
-- `local_volume_snapshot_id` (string) - Local Volume Snapshot Id
+- `local_volume_snapshot_id` (string) - Indicating whether needs local volume snapshot with creating kec instance
 
 - `data_disk_gb` (int) - The data volume capacity is in GB. The capacity limit changes according to the definition of the instance package
   type. If it is not specified when calling, it is the minimum value of the corresponding instance package type.
@@ -151,7 +159,8 @@ necessary for this build to succeed and can be found further down the page.
   If this parameter is not specified, the system will automatically select one from the valid address pool at random
   Valid values: standard IP address format
 
-- `associate_public_ip_address` (bool) - Associate Public Ip Address
+- `associate_public_ip_address` (bool) - Indicating associate whether public ip for creating kec instance
+  Default `false`
 
 - `public_ip_charge_type` (string) - PublicIp charge type, which can be
   Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement

@@ -39,8 +39,10 @@ type CommonConfig struct {
 	// the primary IP address of the instance. Only one can be selected and bound to the primary network card.
 	// If this parameter is not specified, the system will automatically select one from the valid address pool at random
 	// Valid values: standard IP address format
-	PrivateIpAddress         string `mapstructure:"private_ip_address" required:"false"`
-	AssociatePublicIpAddress bool   `mapstructure:"associate_public_ip_address" required:"false"`
+	PrivateIpAddress string `mapstructure:"private_ip_address" required:"false"`
+	// Indicating associate whether public ip for creating kec instance
+	// Default `false`
+	AssociatePublicIpAddress bool `mapstructure:"associate_public_ip_address" required:"false"`
 	// PublicIp charge type, which can be
 	// Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement
 	// Default is Daily
