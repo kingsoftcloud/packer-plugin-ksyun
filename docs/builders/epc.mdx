@@ -164,6 +164,14 @@ necessary for this build to succeed and can be found further down the page.
 
 - `project_id` (string) - Default is 0
 
+- `run_tags` (map[string]string) - Key/value pair tags to apply to the instance that is launched to create the image.
+  These tags are not applied to the resulting image.
+
+- `run_tag` ([]{key string, value string}) - Same as [`run_tags`](#run_tags) but defined as a singular repeatable
+  block containing a `key` and a `value` field. In HCL2 mode the
+  [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
+  will allow you to create those programatically.
+
 <!-- End of code generated from the comments of the CommonConfig struct in builder/common_config.go; -->
 
 

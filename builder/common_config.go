@@ -3,7 +3,10 @@
 
 package ksyun
 
-import "github.com/hashicorp/packer-plugin-sdk/communicator"
+import (
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
+	"github.com/hashicorp/packer-plugin-sdk/template/config"
+)
 
 type CommonConfig struct {
 	// VPC ID allocated by the system.
@@ -52,6 +55,16 @@ type CommonConfig struct {
 	PublicIpBandWidth int `mapstructure:"public_ip_band_width" required:"false"`
 	// Default is 0
 	ProjectId string `mapstructure:"project_id" required:"false"`
+
+	// Key/value pair tags to apply to the instance that is launched to create the image.
+	// These tags are not applied to the resulting image.
+	RunTags map[string]string `mapstructure:"run_tags" required:"false"`
+	// Same as [`run_tags`](#run_tags) but defined as a singular repeatable
+	// block containing a `key` and a `value` field. In HCL2 mode the
+	// [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
+	// will allow you to create those programatically.
+	RunTag config.KeyValues `mapstructure:"run_tag" required:"false"`
+
 	// Communicator settings
 	Comm communicator.Config `mapstructure:",squash"`
 }

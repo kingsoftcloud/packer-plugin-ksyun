@@ -14,4 +14,11 @@
 
 - `image_warm_up` (bool) - Set the image as warm-up for fast boot
 
+- `tags` (map[string]string) - Key/value pair tags applied to the destination image.
+
+- `tag` ([]{key string, value string}) - Same as [`tags`](#tags) but defined as a singular repeatable
+  block containing a `key` and a `value` field. In HCL2 mode the
+  [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
+  will allow you to create those programatically.
+
 <!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->

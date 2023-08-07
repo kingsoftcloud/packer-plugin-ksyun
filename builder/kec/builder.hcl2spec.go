@@ -4,6 +4,7 @@ package kec
 
 import (
 	"github.com/hashicorp/hcl/v2/hcldec"
+	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	ksyun "github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -31,6 +32,8 @@ type FlatConfig struct {
 	KsyunImageCopyNames       []string                    `mapstructure:"image_copy_names" required:"false" cty:"image_copy_names" hcl:"image_copy_names"`
 	KsyunImageShareAccounts   []string                    `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
 	KsyunImageWarmUp          *bool                       `mapstructure:"image_warm_up" required:"false" cty:"image_warm_up" hcl:"image_warm_up"`
+	Tags                      map[string]string           `mapstructure:"tags" required:"false" cty:"tags" hcl:"tags"`
+	Tag                       []config.FlatKeyValue       `mapstructure:"tag" required:"false" cty:"tag" hcl:"tag"`
 	InstanceType              *string                     `mapstructure:"instance_type" required:"true" cty:"instance_type" hcl:"instance_type"`
 	SourceImageId             *string                     `mapstructure:"source_image_id" required:"true" cty:"source_image_id" hcl:"source_image_id"`
 	SourceImageFilter         *ksyun.FlatKmiFilterOptions `mapstructure:"source_image_filter" required:"false" cty:"source_image_filter" hcl:"source_image_filter"`
@@ -59,6 +62,8 @@ type FlatConfig struct {
 	PublicIpChargeType        *string                     `mapstructure:"public_ip_charge_type" required:"false" cty:"public_ip_charge_type" hcl:"public_ip_charge_type"`
 	PublicIpBandWidth         *int                        `mapstructure:"public_ip_band_width" required:"false" cty:"public_ip_band_width" hcl:"public_ip_band_width"`
 	ProjectId                 *string                     `mapstructure:"project_id" required:"false" cty:"project_id" hcl:"project_id"`
+	RunTags                   map[string]string           `mapstructure:"run_tags" required:"false" cty:"run_tags" hcl:"run_tags"`
+	RunTag                    []config.FlatKeyValue       `mapstructure:"run_tag" required:"false" cty:"run_tag" hcl:"run_tag"`
 	Type                      *string                     `mapstructure:"communicator" cty:"communicator" hcl:"communicator"`
 	PauseBeforeConnect        *string                     `mapstructure:"pause_before_connecting" cty:"pause_before_connecting" hcl:"pause_before_connecting"`
 	SSHHost                   *string                     `mapstructure:"ssh_host" cty:"ssh_host" hcl:"ssh_host"`
@@ -142,6 +147,8 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"image_copy_names":             &hcldec.AttrSpec{Name: "image_copy_names", Type: cty.List(cty.String), Required: false},
 		"image_share_accounts":         &hcldec.AttrSpec{Name: "image_share_accounts", Type: cty.List(cty.String), Required: false},
 		"image_warm_up":                &hcldec.AttrSpec{Name: "image_warm_up", Type: cty.Bool, Required: false},
+		"tags":                         &hcldec.AttrSpec{Name: "tags", Type: cty.Map(cty.String), Required: false},
+		"tag":                          &hcldec.BlockListSpec{TypeName: "tag", Nested: hcldec.ObjectSpec((*config.FlatKeyValue)(nil).HCL2Spec())},
 		"instance_type":                &hcldec.AttrSpec{Name: "instance_type", Type: cty.String, Required: false},
 		"source_image_id":              &hcldec.AttrSpec{Name: "source_image_id", Type: cty.String, Required: false},
 		"source_image_filter":          &hcldec.BlockSpec{TypeName: "source_image_filter", Nested: hcldec.ObjectSpec((*ksyun.FlatKmiFilterOptions)(nil).HCL2Spec())},
@@ -170,6 +177,8 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"public_ip_charge_type":        &hcldec.AttrSpec{Name: "public_ip_charge_type", Type: cty.String, Required: false},
 		"public_ip_band_width":         &hcldec.AttrSpec{Name: "public_ip_band_width", Type: cty.Number, Required: false},
 		"project_id":                   &hcldec.AttrSpec{Name: "project_id", Type: cty.String, Required: false},
+		"run_tags":                     &hcldec.AttrSpec{Name: "run_tags", Type: cty.Map(cty.String), Required: false},
+		"run_tag":                      &hcldec.BlockListSpec{TypeName: "run_tag", Nested: hcldec.ObjectSpec((*config.FlatKeyValue)(nil).HCL2Spec())},
 		"communicator":                 &hcldec.AttrSpec{Name: "communicator", Type: cty.String, Required: false},
 		"pause_before_connecting":      &hcldec.AttrSpec{Name: "pause_before_connecting", Type: cty.String, Required: false},
 		"ssh_host":                     &hcldec.AttrSpec{Name: "ssh_host", Type: cty.String, Required: false},

@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     ksyun = {
-      version = ">=0.2.0"
+      version = ">=0.3.0"
       source  = "github.com/kingsoftcloud/ksyun"
     }
   }
@@ -21,7 +21,7 @@ source "ksyun-kec" "test" {
   access_key      = var.ak
   secret_key      = var.sk
   region          = "cn-shanghai-2"
-  image_name      = "packer_test"
+  image_name      = "packer_tags"
 
   // 如果 source_image_id = "", 那么将会使用 source_image_filter 来过滤出 source_image_id
   // 同样满足直接指定source_image_id
@@ -62,11 +62,22 @@ source "ksyun-kec" "test" {
   # 如果 source_image_id != "", 将会以source_image_id作为查询条件，并以source_image_filter进行过滤
   # 若source_image_id所属镜像不满足source_image_filter条件则无法以该source_image_id进行镜像创建
   source_image_filter {
-    platform     = "centos-7.5"
-    name_regex   = "centos-7.5.*"
-    image_source = "system" // import, copy, share, extend, system.
+    platform     = "ubuntu-22.04"
+#    name_regex   = "centos-7.5.*"
+    #image_source = "extend" // import, copy, share, extend, system.
     most_recent  = true
   }
+
+  # 应用于创建镜像过程中使用的资源的标签，这些标签并不应用到最终的镜像
+  run_tags = {
+    packer_tags="run_tags"
+  }
+
+  # 应用到最终创建的镜像的标签
+  tags = {
+    packer_tags="destination_image"
+  }
+
 }
 
 build {
