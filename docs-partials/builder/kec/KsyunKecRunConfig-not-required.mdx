@@ -1,0 +1,53 @@
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `source_image_filter` (ksyun.KmiFilterOptions) - Filters used to populate the `source_image_id` field.
+  
+  Example Hcl usage:
+  ```hcl
+   source_image_filter {
+     platform     = "centos-7.5"
+     name_regex   = "centos-7.5.*"
+     image_source = "system" # import, copy, share, extend, system.
+     most_recent  = true
+   }
+  ```
+  `most_recent` will cause this to succeed by selecting the newest image.
+
+- `system_disk_type` (string) - Local_SSD || SSD3.0 || EHDD
+
+- `system_disk_size` (int) - System Disk Size
+
+- `data_disks` ([]KsyunEbsDataDisk) - `data_disks` is able to create Ksyun Kec instance with data disks.
+  Example Hcl usage:
+  ```hcl
+    data_disks {
+     data_disk_type = "SSD3.0"
+     data_disk_size = 50
+     data_disk_snapshot_id = "data disk snapshot id" # creat disk with a data disk snapshot existed.
+   }
+  ```
+
+- `instance_name` (string) - Display name of the instance, which is a string of 2 to 128 Chinese or
+  English characters. It must begin with an uppercase/lowercase letter or
+  a Chinese charac displayed on the Alibaba Cloud console. If this
+  	// parameter is not specified, the default value is InstanceId of the
+  	// instance. It cannot begin with `http://` or `https://`.ter and can contain numerals, `.`, `_`, or `-`. The
+  instance name is packer_kec_instance
+
+- `sriov_net_support` (bool) - This parameter needs to satisfy the following two conditions:
+  IO optimized I1, calculation optimized C1, and IO optimized I2 are more than 8C packages
+  We use the standard image improved by Jinshan cloud or the user-defined image made by
+  the instance of starting the Jinshan cloud standard image
+  default : false
+
+- `local_volume_snapshot_id` (string) - Indicating whether needs local volume snapshot with creating kec instance
+
+- `data_disk_gb` (int) - The data volume capacity is in GB. The capacity limit changes according to the definition of the instance package
+  type. If it is not specified when calling, it is the minimum value of the corresponding instance package type.
+  When the instancetype is a general-purpose host N1, N2, N3 or a local nvme I4, this parameter
+  does not take effect.
+
+- `user_data` (string) - The user-defined data provided for instance startup needs to be encoded in Base64 mode,
+  and the maximum data size supported is 16kb
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->

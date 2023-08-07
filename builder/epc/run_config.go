@@ -3,37 +3,67 @@ package epc
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
 	ksyun "github.com/kingsoftcloud/packer-plugin-ksyun/builder"
 )
 
 type KsyunEpcRunConfig struct {
-	HostType                   string `mapstructure:"host_type" required:"true"`
-	Raid                       string `mapstructure:"raid" required:"false"`
-	SourceImageId              string `mapstructure:"source_image_id" required:"true"`
-	NetworkInterfaceMode       string `mapstructure:"network_interface_mode" required:"false"`
-	HostName                   string `mapstructure:"host_name" required:"false"`
-	ComputerName               string `mapstructure:"computer_name" required:"false"`
-	HostChargeType             string `mapstructure:"host_charge_type" required:"false"`
-	SecurityAgent              string `mapstructure:"security_agent" required:"false"`
-	ContainerAgent             string `mapstructure:"container_agent" required:"false"`
-	CloudMonitorAgent          string `mapstructure:"cloud_monitor_agent" required:"false"`
-	SystemFileType             string `mapstructure:"system_file_type" required:"false"`
-	DataFileType               string `mapstructure:"data_file_type" required:"false"`
-	DataDiskCatalogue          string `mapstructure:"data_disk_catalogue" required:"false"`
-	DataDiskCatalogueSuffix    string `mapstructure:"data_disk_catalogue_suffix" required:"false"`
-	ExtensionSubnetId          string `mapstructure:"extension_subnet_id" required:"false"`
-	ExtensionSubnetName        string `mapstructure:"extension_subnet_name" required:"false"`
-	ExtensionSubnetCidrBlock   string `mapstructure:"extension_subnet_cidr_block" required:"false"`
-	ExtensionPrivateIpAddress  string `mapstructure:"extension_private_ip_address" required:"false"`
-	ExtensionDNS1              string `mapstructure:"extension_dns1" required:"false"`
-	ExtensionDNS2              string `mapstructure:"extension_dns2" required:"false"`
+	// Machine type of epc.
+	// Valid Options: see the [HostType of epc information](https://docs.ksyun.com/documents/651)
+	HostType string `mapstructure:"host_type" required:"true"`
+	// Data Disk Raid level. Valid options: `Raid1`, `Raid5`, `Raid10`, `Raid50` and `SRaid0`,
+	// the details see the [Raid of epc information](https://docs.ksyun.com/documents/651)
+	Raid string `mapstructure:"raid" required:"false"`
+	// Source image id whose root volume will be copied and provisioned on the currently running instance.
+	SourceImageId string `mapstructure:"source_image_id" required:"true"`
+	// Network interface mode. Valid options: `bond4`, `single` and `dual`.
+	NetworkInterfaceMode string `mapstructure:"network_interface_mode" required:"false"`
+	// The name of epc host. Default value: `ksc_epc`.
+	HostName string `mapstructure:"host_name" required:"false"`
+	// The system name of this epc computer.
+	ComputerName   string `mapstructure:"computer_name" required:"false"`
+	HostChargeType string `mapstructure:"host_charge_type" required:"false"`
+	// Security component type. Valid options: `classic` and `no`.
+	SecurityAgent string `mapstructure:"security_agent" required:"false"`
+	// Container engine component type. Valid options: `supported` and `unsupported`, Default `unsupported`.
+	ContainerAgent string `mapstructure:"container_agent" required:"false"`
+	// The monitor agent.
+	CloudMonitorAgent string `mapstructure:"cloud_monitor_agent" required:"false"`
+	// The system disk file type. Valid options: `EXT4` and `XFS`. Default `EXT4`.
+	SystemFileType string `mapstructure:"system_file_type" required:"false"`
+	// The Data disk file type. Valid options: `EXT4` and `XFS`. Default `EXT4`.
+	DataFileType string `mapstructure:"data_file_type" required:"false"`
+	// The catalogue of data disk. Valid options: `/DATA/disk` and `/data`. Default `/data`.
+	DataDiskCatalogue string `mapstructure:"data_disk_catalogue" required:"false"`
+	// The suffix of data disk catalogue.
+	// `NoSuffix`: creating data disk catalogue without suffix, but it's valid, when there is one data disk.
+	// `NaturalNumber`: creating data disk catalogue with suffix that increment from 1.
+	// `NaturalNumberFromZero`: creating data disk catalogue with suffix that increment from 0.
+	// Valid options: `NoSuffix`, `NaturalNumber` and `NaturalNumberFromZero`.
+	// Default `NaturalNumber`
+	DataDiskCatalogueSuffix string `mapstructure:"data_disk_catalogue_suffix" required:"false"`
+	// The subnet id of secondary network interface
+	ExtensionSubnetId string `mapstructure:"extension_subnet_id" required:"false"`
+	// The subnet name of secondary network interface
+	ExtensionSubnetName string `mapstructure:"extension_subnet_name" required:"false"`
+	// The subnet cidr block of secondary network interface.
+	ExtensionSubnetCidrBlock string `mapstructure:"extension_subnet_cidr_block" required:"false"`
+	// The private ip address under the vpc of secondary network interface.
+	ExtensionPrivateIpAddress string `mapstructure:"extension_private_ip_address" required:"false"`
+	// The address of first dns server.
+	ExtensionDNS1 string `mapstructure:"extension_dns1" required:"false"`
+	// The address of second dns server.
+	ExtensionDNS2 string `mapstructure:"extension_dns2" required:"false"`
+
 	ExtensionSecurityGroupId   string `mapstructure:"extension_security_group_id" required:"false"`
 	ExtensionSecurityGroupName string `mapstructure:"extension_security_group_name" required:"false"`
-	TempSubnetId               string
-	TempSecurityGroupId        string
-	ksyun.CommonConfig         `mapstructure:",squash"`
+	// The temporary subnet id.
+	TempSubnetId string
+	// The temporary security group id.
+	TempSecurityGroupId string
+	ksyun.CommonConfig  `mapstructure:",squash"`
 }
 
 func (c *KsyunEpcRunConfig) Prepare(ctx *interpolate.Context) []error {

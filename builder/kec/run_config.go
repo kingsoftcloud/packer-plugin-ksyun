@@ -1,4 +1,5 @@
 //go:generate packer-sdc struct-markdown
+
 package kec
 
 import (
@@ -23,7 +24,7 @@ type KsyunEbsDataDisk struct {
 type KsyunKecRunConfig struct {
 	// Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
 	InstanceType  string `mapstructure:"instance_type" required:"true"`
-	SourceImageId string `mapstructure:"source_image_id" required:"false"`
+	SourceImageId string `mapstructure:"source_image_id" required:"true"`
 	// Filters used to populate the `source_image_id` field.
 	//
 	// Example Hcl usage:
@@ -31,17 +32,27 @@ type KsyunKecRunConfig struct {
 	//  source_image_filter {
 	//    platform     = "centos-7.5"
 	//    name_regex   = "centos-7.5.*"
-	//    image_source = "system" // import, copy, share, extend, system.
+	//    image_source = "system" # import, copy, share, extend, system.
 	//    most_recent  = true
 	//  }
 	// ```
+	// `most_recent` will cause this to succeed by selecting the newest image.
 	//
 	SourceImageFilter ksyun.KmiFilterOptions `mapstructure:"source_image_filter" required:"false"`
 
 	// Local_SSD || SSD3.0 || EHDD
 	SystemDiskType string `mapstructure:"system_disk_type" required:"false"`
 	SystemDiskSize int    `mapstructure:"system_disk_size" required:"false"`
-	// EbsDataDisk
+	// `data_disks` is able to create Ksyun Kec instance with data disks.
+	// Example Hcl usage:
+	// ```hcl
+	//   data_disks {
+	//    data_disk_type = "SSD3.0"
+	//    data_disk_size = 50
+	//    data_disk_snapshot_id = "data disk snapshot id" # creat disk with a data disk snapshot existed.
+	//  }
+	// ```
+	//
 	KsyunEbsDataDisks []KsyunEbsDataDisk `mapstructure:"data_disks" required:"false"`
 	// PostPaidByDay or PostPaidByHour
 	// default is PostPaidByDay
@@ -58,7 +69,8 @@ type KsyunKecRunConfig struct {
 	// We use the standard image improved by Jinshan cloud or the user-defined image made by
 	// the instance of starting the Jinshan cloud standard image
 	// default : false
-	SriovNetSupport       bool   `mapstructure:"sriov_net_support" required:"false"`
+	SriovNetSupport bool `mapstructure:"sriov_net_support" required:"false"`
+	// Indicating whether needs local volume snapshot with creating kec instance
 	LocalVolumeSnapshotId string `mapstructure:"local_volume_snapshot_id" required:"false"`
 	// The data volume capacity is in GB. The capacity limit changes according to the definition of the instance package
 	// type. If it is not specified when calling, it is the minimum value of the corresponding instance package type.

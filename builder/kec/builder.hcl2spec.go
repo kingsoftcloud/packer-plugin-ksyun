@@ -35,7 +35,7 @@ type FlatConfig struct {
 	Tags                      map[string]string           `mapstructure:"tags" required:"false" cty:"tags" hcl:"tags"`
 	Tag                       []config.FlatKeyValue       `mapstructure:"tag" required:"false" cty:"tag" hcl:"tag"`
 	InstanceType              *string                     `mapstructure:"instance_type" required:"true" cty:"instance_type" hcl:"instance_type"`
-	SourceImageId             *string                     `mapstructure:"source_image_id" required:"false" cty:"source_image_id" hcl:"source_image_id"`
+	SourceImageId             *string                     `mapstructure:"source_image_id" required:"true" cty:"source_image_id" hcl:"source_image_id"`
 	SourceImageFilter         *ksyun.FlatKmiFilterOptions `mapstructure:"source_image_filter" required:"false" cty:"source_image_filter" hcl:"source_image_filter"`
 	SystemDiskType            *string                     `mapstructure:"system_disk_type" required:"false" cty:"system_disk_type" hcl:"system_disk_type"`
 	SystemDiskSize            *int                        `mapstructure:"system_disk_size" required:"false" cty:"system_disk_size" hcl:"system_disk_size"`

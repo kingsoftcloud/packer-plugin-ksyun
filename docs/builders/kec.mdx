@@ -1,0 +1,315 @@
+---
+description: >
+  The ksyun-kec Packer builder is able to create Ksyun Images backed by
+  instance storage as the root device.
+
+page_title: Ksyun Instance(KEC) - Builders
+nav_title: Instance(KEC)
+---
+
+# Ksyun Image Builder (kec)
+
+Type: `ksyun-kec`
+
+The `ksyun-kec` Packer builder is able to create Ksyun Images backed by
+instance storage as the root device.
+
+
+## Configuration Reference
+
+There are many configuration options available for the builder. In addition to
+the items listed here, you will want to look at the general configuration
+references for [Image](#image-configuration),
+[Access](#access-configuration),
+[Run](#run-configuration) and
+[General](#general-configuration)
+configuration references, which are
+necessary for this build to succeed and can be found further down the page.
+
+## Run Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `instance_type` (string) - Instance package type, if the instance package type is not specified when calling, the default value is I1.1A.
+
+- `source_image_id` (string) - Source Image Id
+
+- `instance_charge_type` (string) - PostPaidByDay or PostPaidByHour
+  default is PostPaidByDay
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `source_image_filter` (ksyun.KmiFilterOptions) - Filters used to populate the `source_image_id` field.
+  
+  Example Hcl usage:
+  ```hcl
+   source_image_filter {
+     platform     = "centos-7.5"
+     name_regex   = "centos-7.5.*"
+     image_source = "system" # import, copy, share, extend, system.
+     most_recent  = true
+   }
+  ```
+  `most_recent` will cause this to succeed by selecting the newest image.
+
+- `system_disk_type` (string) - Local_SSD || SSD3.0 || EHDD
+
+- `system_disk_size` (int) - System Disk Size
+
+- `data_disks` ([]KsyunEbsDataDisk) - `data_disks` is able to create Ksyun Kec instance with data disks.
+  Example Hcl usage:
+  ```hcl
+    data_disks {
+     data_disk_type = "SSD3.0"
+     data_disk_size = 50
+     data_disk_snapshot_id = "data disk snapshot id" # creat disk with a data disk snapshot existed.
+   }
+  ```
+
+- `instance_name` (string) - Display name of the instance, which is a string of 2 to 128 Chinese or
+  English characters. It must begin with an uppercase/lowercase letter or
+  a Chinese charac displayed on the Alibaba Cloud console. If this
+  	// parameter is not specified, the default value is InstanceId of the
+  	// instance. It cannot begin with `http://` or `https://`.ter and can contain numerals, `.`, `_`, or `-`. The
+  instance name is packer_kec_instance
+
+- `sriov_net_support` (bool) - This parameter needs to satisfy the following two conditions:
+  IO optimized I1, calculation optimized C1, and IO optimized I2 are more than 8C packages
+  We use the standard image improved by Jinshan cloud or the user-defined image made by
+  the instance of starting the Jinshan cloud standard image
+  default : false
+
+- `local_volume_snapshot_id` (string) - Indicating whether needs local volume snapshot with creating kec instance
+
+- `data_disk_gb` (int) - The data volume capacity is in GB. The capacity limit changes according to the definition of the instance package
+  type. If it is not specified when calling, it is the minimum value of the corresponding instance package type.
+  When the instancetype is a general-purpose host N1, N2, N3 or a local nvme I4, this parameter
+  does not take effect.
+
+- `user_data` (string) - The user-defined data provided for instance startup needs to be encoded in Base64 mode,
+  and the maximum data size supported is 16kb
+
+<!-- End of code generated from the comments of the KsyunKecRunConfig struct in builder/kec/run_config.go; -->
+
+
+## Access Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the AccessConfig struct in builder/access_config.go; DO NOT EDIT MANUALLY -->
+
+- `access_key` (string) - Ksyun access key must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_ACCESS_KEY` environment variable.
+
+- `secret_key` (string) - Ksyun secret key must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_SECRET_KEY` environment variable.
+
+- `region` (string) - Ksyun region must be provided unless `profile` is set, but it can
+  also be sourced from the `KSYUN_REGION` environment variable.
+
+<!-- End of code generated from the comments of the AccessConfig struct in builder/access_config.go; -->
+
+
+## General Configuration
+
+### Optional:
+
+<!-- Code generated from the comments of the CommonConfig struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `vpc_id` (string) - VPC ID allocated by the system.
+
+- `vpc_name` (string) - the default value is packer_vpc
+
+- `vpc_cidr_block` (string) - 172.16.0.0/16. When not specified, the default value is 172.16.0.0/16.
+
+- `subnet_id` (string) - The ID of the Subnet to be used.
+
+- `subnet_name` (string) - the default value is packer_subnet
+
+- `dns1` (string) - 172.16.0.0/24. When not specified, the default value is 172.16.0.0/24.
+
+- `dns2` (string) - DNS 2
+
+- `subnet_cidr_block` (string) - Subnet Cidr Block
+
+- `availability_zone` (string) - availability_zone
+
+- `security_group_id` (string) - ID of the security group to which a newly
+  created instance belongs. Mutual access is allowed between instances in one
+  security group. If not specified, the newly created instance will be added
+  to the default security group. If the default group doesn’t exist, or the
+  number of instances in it has reached the maximum limit, a new security
+  group will be created automatically.
+
+- `security_group_name` (string) - The security group name. The default value
+  is blank. [2, 128] English or Chinese characters, must begin with an
+  uppercase/lowercase letter or Chinese character. Can contain numbers, .,
+  _ or -. It cannot begin with `http://` or `https://`.
+  the default value is packer_security_group
+
+- `private_ip_address` (string) - Private IP address, which specifies any valid value within the range of subnet IP address and represents
+  the primary IP address of the instance. Only one can be selected and bound to the primary network card.
+  If this parameter is not specified, the system will automatically select one from the valid address pool at random
+  Valid values: standard IP address format
+
+- `associate_public_ip_address` (bool) - Indicating associate whether public ip for creating kec instance
+  Default `false`
+
+- `public_ip_charge_type` (string) - PublicIp charge type, which can be
+  Daily TrafficMonthly DailyPaidByTransfer HourlyInstantSettlement
+  Default is Daily
+
+- `public_ip_band_width` (int) - [1-100]
+  Default is 1
+
+- `project_id` (string) - Default is 0
+
+- `run_tags` (map[string]string) - Key/value pair tags to apply to the instance that is launched to create the image.
+  These tags are not applied to the resulting image.
+
+- `run_tag` ([]{key string, value string}) - Same as [`run_tags`](#run_tags) but defined as a singular repeatable
+  block containing a `key` and a `value` field. In HCL2 mode the
+  [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
+  will allow you to create those programatically.
+
+<!-- End of code generated from the comments of the CommonConfig struct in builder/common_config.go; -->
+
+
+## Image Configuration
+
+### Required:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_name` (string) - The name of the user-defined image, [2, 64] English or Chinese
+  characters. It must begin with an uppercase/lowercase letter or a
+  Chinese character, and may contain numbers, `_` or `-`. It cannot begin
+  with `http://` or `https://`.
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+
+
+### Optional:
+
+<!-- Code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_type` (string) - The type of image
+  LocalImage (ebs) or CommonImage (ks3)
+
+- `image_ignore_data_disks` (bool) - If this value is true, the image created will not include any snapshot
+  of data disks. The default value is false.
+
+- `image_copy_regions` ([]string) - Copy to the regions.
+
+- `image_copy_names` ([]string) - The image name in copied regions
+
+- `image_share_accounts` ([]string) - Share image to other accounts
+
+- `image_warm_up` (bool) - Set the image as warm-up for fast boot
+
+- `tags` (map[string]string) - Key/value pair tags applied to the destination image.
+
+- `tag` ([]{key string, value string}) - Same as [`tags`](#tags) but defined as a singular repeatable
+  block containing a `key` and a `value` field. In HCL2 mode the
+  [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
+  will allow you to create those programatically.
+
+<!-- End of code generated from the comments of the KsyunImageConfig struct in builder/kec/image_config.go; -->
+
+
+### Source Image Filter Configuration
+
+<!-- Code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; DO NOT EDIT MANUALLY -->
+
+- `most_recent` (bool) - Selects the newest created image when true.
+  This is most useful for selecting a daily distro build.
+
+- `image_source` (string) - ImageSource Valid values are import, copy, share, extend, system.
+
+- `name_regex` (string) - NameRegex A regex string to filter resulting images by name.
+  (Such as: `^CentOS 7.[1-2] 64` means CentOS 7.1 of 64-bit operating system or CentOS 7.2 of 64-bit operating system,
+  \"^Ubuntu 16.04 64\" means Ubuntu 16.04 of 64-bit operating system).
+
+- `platform` (string) - Platform type of the image system.
+
+<!-- End of code generated from the comments of the KmiFilterOptions struct in builder/common_config.go; -->
+
+
+## Basic Example
+
+Here is a basic example. It is completely valid but excludes the access keys:
+
+### Example Usage
+
+```hcl
+packer {
+  required_plugins {
+    ksyun = {
+      version = ">=0.1.0"
+      source  = "github.com/kingsoftcloud/ksyun"
+    }
+  }
+}
+
+variable ak {
+  type    = string
+  default = "${env("KSYUN_ACCESS_KEY")}"
+}
+
+variable sk {
+  type    = string
+  default = "${env("KSYUN_SECRET_KEY")}"
+}
+
+source "ksyun-kec" "test" {
+  access_key      = var.ak
+  secret_key      = var.sk
+  region          = "cn-shanghai-2"
+  image_name      = "packer_test"
+  source_image_id = "IMG-05f198b3-9df6-4f94-a3e3-dcee4b48c4aa"
+  instance_type   = "N3.1B"
+  ssh_username    = "root"
+
+  # 此参数用于跳过ssh
+  # communicator                = "none"
+
+  # 如需使用ssh，须保证网络能通，如果不在同一个网络环境下就要挂公网ip
+  associate_public_ip_address = true
+
+  ssh_clear_authorized_keys = true
+
+  # 此参数为true时，data_disks的硬盘不会打快照加入镜像
+  image_ignore_data_disks = true
+
+  data_disks {
+    data_disk_type = "SSD3.0"
+    data_disk_size = 50
+  }
+
+  # 复制镜像到以下region
+  image_copy_regions = ["cn-beijing-6", "cn-guangzhou-1"]
+
+  # 镜像复制后的名称, 不命名则使用原镜像的名称
+  image_copy_names = ["copy-test"]
+
+  # 开启镜像预热
+  image_warm_up = true
+
+  # 镜像共享给其他用户
+  #  image_share_accounts = ["xxxxxxxx", "xxxxxxxx"]
+}
+
+build {
+  sources = ["source.ksyun-kec.test"]
+  provisioner "shell" {
+    inline = ["sleep 10", "df -h"]
+  }
+}
+```
