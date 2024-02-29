@@ -28,7 +28,11 @@ build:
 
 install: build
 
-generate: install-packer-sdc
-	go generate ./...
+generate: install-packer-sdc 
+	@go generate ./... 
+	@rm -rf .docs 
+	@packer-sdc renderdocs -src docs -partials docs-partials/ -dst .docs/ 
+	@./.web-docs/scripts/compile-to-webdocs.sh "." ".docs" ".web-docs" "kingsoftcloud" 
+	@rm -r ".docs"
 
 .PHONY: default test test_integration lint build install
