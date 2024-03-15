@@ -2,7 +2,7 @@
 # https://github.com/hashicorp/integration-template#metadata-configuration
 integration {
   name = "Kingsoft Cloud"
-  description = "The Amazon plugin can be used with HashiCorp Packer to create custom images on AWS."
+  description = "The Kinfsoft Cloud plugin can be used with HashiCorp Packer to create custom images on Ksyun."
   identifier = "packer/kingsoftcloud/ksyun"
   component {
     type = "data-source"
