@@ -23,9 +23,6 @@ $ packer plugins install github.com/kingsoftcloud/ksyun
 
 ### Components
 
-**Don't know which builder to use?** If in doubt, use the [amazon-ebs builder](/packer/plugins/builders/amazon/ebs).
-It is much easier to use and Amazon generally recommends EBS-backed images nowadays.
-
 #### Builders
 - [ksyun-epc](/packer/integrations/kingsoftcloud/ksyun/latest/components/builder/epc) - The ksyun-epc Packer builder is able to create Ksyun Images backed by
   bare metal instance storage as the root device.
